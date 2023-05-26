@@ -35,7 +35,7 @@
     "psr12fix": "./tools/phpcbf --standard=PSR12 src/ test/ bin/",
     "phplint": "./tools/parallel-lint --exclude vendor/ .",
     "analyze": "./tools/phan",
-    "requirement": "./tools/requirement-checker",
+    "requirement": "./tools/composer-require-checker",
     "infection": "phpdbg -qrr ./tools/infection",
     "mess": "./tools/phpmd src/ text phpmd.full.xml"
   }
