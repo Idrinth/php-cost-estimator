@@ -12,6 +12,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          php-extensions: xml json tokenizer ctype intl phpdbg phar mbstring
       - uses: actions/checkout@v3
       - name: Cache Composer packages
         id: composer-cache
