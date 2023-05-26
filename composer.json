@@ -1,6 +1,12 @@
 {
   "name": "idrinth/php-cost-estimator",
   "description": "A simple tool to estimate the cost of a php script change",
+  "keywords": [
+    "static analysis",
+    "performance",
+    "continous integration",
+    "ci"
+  ],
   "type": "project",
   "license": "MIT",
   "authors": [
@@ -24,7 +30,7 @@
     "php": "^8.2",
     "nikic/php-parser": "^4.15.5",
     "roave/security-advisories": "dev-master",
-    "symfony/console": "*"
+    "symfony/console": "^6.2.10"
   },
   "require-dev": {
     "phpunit/phpunit": "^10.1.3"
