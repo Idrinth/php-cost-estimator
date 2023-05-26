@@ -22,7 +22,7 @@ final class UsesArrayKeyExists implements Rule
         return Cost::LOW;
     }
 
-    public function applies(Node $astNode, PHPEnvironment $phpEnvironment): bool
+    public function applies(Node $astNode): bool
     {
         return false;
     }
@@ -30,5 +30,10 @@ final class UsesArrayKeyExists implements Rule
     public function set(): RuleSet
     {
         return RuleSet::BEST_PRACTICES;
+    }
+
+    public function relevant(PHPEnvironment $phpEnvironment): bool
+    {
+        return true;
     }
 }

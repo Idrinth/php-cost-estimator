@@ -51,3 +51,5 @@ jobs:
         run: composer run-script test
       - name: Run mutation tests
         run: composer run-script infection
+      - name: Run self test
+        run: php bin/estimate-cost

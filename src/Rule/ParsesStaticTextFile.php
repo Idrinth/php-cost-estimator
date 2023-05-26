@@ -21,7 +21,7 @@ final class ParsesStaticTextFile implements \De\Idrinth\PhpCostEstimator\Rule
         return Cost::MEDIUM_HIGH;
     }
 
-    public function applies(Node $astNode, PHPEnvironment $phpEnvironment): bool
+    public function applies(Node $astNode): bool
     {
         return false;
     }
@@ -29,5 +29,10 @@ final class ParsesStaticTextFile implements \De\Idrinth\PhpCostEstimator\Rule
     public function set(): RuleSet
     {
         return RuleSet::BUILD_PROCESS_ISSUE;
+    }
+
+    public function relevant(PHPEnvironment $phpEnvironment): bool
+    {
+        return PHPEnvironment::CLI !== $phpEnvironment;
     }
 }

@@ -4,29 +4,17 @@ declare(strict_types=1);
 
 namespace De\Idrinth\PhpCostEstimator\State;
 
+use De\Idrinth\PhpCostEstimator\PHPEnvironment;
+use De\Idrinth\PhpCostEstimator\Rule;
 use Generator;
 use IteratorAggregate;
 
 final class CallableList implements IteratorAggregate
 {
     /**
-     * @var FunctionLikeCost[]
+     * @var FunctionLike[]
      */
     private array $callables = [];
-    /**
-     * @var int[]
-     */
-    private array $calls = [];
-    public function addDefinition(FunctionLikeCost $callable)
-    {
-        if ($callable->cost() > 0) {
-            $this->callables[$callable->name()] = $callable;
-        }
-    }
-    public function addCalls(string $name, int $calls = 1)
-    {
-        $this->calls[$name] = ($this->calls[$name] ?? 0) + $calls;
-    }
     public function getIterator(): Generator
     {
         foreach ($this->callables as $callable) {
@@ -39,5 +27,31 @@ final class CallableList implements IteratorAggregate
                 );
             }
         }
+    }
+    public function registerDefinition(string $name, ?PHPEnvironment $environment, Rule ...$matchedRules): void
+    {
+        if (!isset($this->callables[$name])) {
+            $this->callables[$name] = new FunctionLike($name);
+        }
+        foreach ($matchedRules as $rule) {
+            $this->callables[$name]->registerRule($rule);
+        }
+        if ($environment instanceof PHPEnvironment) {
+            $this->callables[$name]->markStart($environment);
+        }
+    }
+
+    public function registerCallee(string $context, string $called, int $count): void
+    {
+        if ($context === '') {
+            return;
+        }
+        if (!isset($this->callables[$context])) {
+            $this->callables[$context] = new FunctionLike($context);
+        }
+        if (!isset($this->callables[$called])) {
+            $this->callables[$called] = new FunctionLike($called);
+        }
+        $this->callables[$context]->registerCallee($this->callables[$called], $count);
     }
 }

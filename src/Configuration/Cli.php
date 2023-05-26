@@ -48,4 +48,9 @@ final class Cli implements Configuration
     {
         return $this->input->hasOption('check-optimized-autoloader');
     }
+
+    public function minSeverity(): int
+    {
+        return (int) $this->input->getOption('min-severity');
+    }
 }

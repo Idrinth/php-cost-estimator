@@ -20,6 +20,10 @@ final class File implements Configuration
      * @var string[]
      */
     private array $folders = [];
+    /**
+     * @var int|mixed
+     */
+    private int $minSeverity;
 
     public function __construct(string $workingDirectory)
     {
@@ -33,6 +37,7 @@ final class File implements Configuration
         $this->rules = $data['rules'] ?? [];
         $this->version = $data['version'] ?? '';
         $this->folders = $data['folders'] ?? [];
+        $this->minSeverity = $data['minSeverity'] ?? 0;
     }
 
     /**
@@ -63,5 +68,9 @@ final class File implements Configuration
     public function checkOptimizedAutoloader(): bool
     {
         return false;
+    }
+    public function minSeverity(): int
+    {
+        return $this->minSeverity;
     }
 }

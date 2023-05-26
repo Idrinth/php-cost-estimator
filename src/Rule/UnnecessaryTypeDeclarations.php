@@ -22,7 +22,7 @@ final class UnnecessaryTypeDeclarations implements Rule
         return Cost::VERY_LOW;
     }
 
-    public function applies(Node $astNode, PHPEnvironment $phpEnvironment): bool
+    public function applies(Node $astNode): bool
     {
         return false;
     }
@@ -30,5 +30,10 @@ final class UnnecessaryTypeDeclarations implements Rule
     public function set(): RuleSet
     {
         return RuleSet::CONTROVERSIAL;
+    }
+
+    public function relevant(PHPEnvironment $phpEnvironment): bool
+    {
+        return true;
     }
 }

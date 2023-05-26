@@ -6,4 +6,5 @@ enum PHPEnvironment
 {
     case CLI;
     case SERVER;
+    case BOTH;
 }

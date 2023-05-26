@@ -21,7 +21,7 @@ final class UsesFallbackToRootNamespace implements \De\Idrinth\PhpCostEstimator\
         return Cost::VERY_LOW;
     }
 
-    public function applies(Node $astNode, PHPEnvironment $phpEnvironment): bool
+    public function applies(Node $astNode): bool
     {
         return false;
     }
@@ -29,5 +29,10 @@ final class UsesFallbackToRootNamespace implements \De\Idrinth\PhpCostEstimator\
     public function set(): RuleSet
     {
         return RuleSet::BEST_PRACTICES;
+    }
+
+    public function relevant(PHPEnvironment $phpEnvironment): bool
+    {
+        return true;
     }
 }

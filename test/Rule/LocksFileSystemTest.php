@@ -11,7 +11,7 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(LocksFileSystem::class)]
-class LocksFileSystemTest extends TestCase
+final class LocksFileSystemTest extends TestCase
 {
     public static function provideMatchingAsts(): array
     {
@@ -26,6 +26,6 @@ class LocksFileSystemTest extends TestCase
     public function astNodeIsFileSystemRead(Node $astNode): void
     {
         $sut = new LocksFileSystem();
-        self::assertTrue($sut->applies($astNode, PHPEnvironment::SERVER));
+        self::assertTrue($sut->applies($astNode));
     }
 }

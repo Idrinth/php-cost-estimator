@@ -22,13 +22,18 @@ final class ConnectsToUnusedDatabase implements Rule
         return Cost::MEDIUM;
     }
 
-    public function applies(Node $astNode, PHPEnvironment $phpEnvironment): bool
+    public function applies(Node $astNode): bool
     {
-        return true;
+        return false;
     }
 
     public function set(): RuleSet
     {
         return RuleSet::CONTROVERSIAL;
+    }
+
+    public function relevant(PHPEnvironment $phpEnvironment): bool
+    {
+        return true;
     }
 }

@@ -18,4 +18,5 @@ interface Configuration
     public function foldersToScan(): iterable;
     public function checkCleanedDependencies(): bool;
     public function checkOptimizedAutoloader(): bool;
+    public function minSeverity(): int;
 }

@@ -61,4 +61,9 @@ final class Merged implements Configuration
         }
         return false;
     }
+
+    public function minSeverity(): int
+    {
+        return 0;
+    }
 }

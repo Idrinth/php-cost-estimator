@@ -22,11 +22,8 @@ final class ReadsFromFileSystem implements Rule
         return Cost::MEDIUM_LOW;
     }
 
-    public function applies(Node $astNode, PHPEnvironment $phpEnvironment): bool
+    public function applies(Node $astNode): bool
     {
-        if (PHPEnvironment::CLI === $phpEnvironment) {
-            return false;
-        }
         if (!($astNode instanceof Node\Expr\FuncCall))  {
             return false;
         }
@@ -45,5 +42,10 @@ final class ReadsFromFileSystem implements Rule
     public function set(): RuleSet
     {
         return RuleSet::BEST_PRACTICES;
+    }
+
+    public function relevant(PHPEnvironment $phpEnvironment): bool
+    {
+        return PHPEnvironment::CLI !== $phpEnvironment;
     }
 }

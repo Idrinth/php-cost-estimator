@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace De\Idrinth\PhpCostEstimator\Rule;
 
-use De\Idrinth\PhpCostEstimator\PHPEnvironment;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -13,7 +12,7 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(ReadsFromFileSystem::class)]
-class ReadsFromFileSystemTest extends TestCase
+final class ReadsFromFileSystemTest extends TestCase
 {
     public static function provideMatchingAsts(): array
     {
@@ -31,6 +30,6 @@ class ReadsFromFileSystemTest extends TestCase
     public function astNodeIsFileSystemRead(Node $astNode): void
     {
         $sut = new ReadsFromFileSystem();
-        self::assertTrue($sut->applies($astNode, PHPEnvironment::SERVER));
+        self::assertTrue($sut->applies($astNode));
     }
 }

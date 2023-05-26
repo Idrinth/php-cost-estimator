@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace De\Idrinth\PhpCostEstimator\Rule;
 
 use De\Idrinth\PhpCostEstimator\Cost;
+use De\Idrinth\PhpCostEstimator\PHPEnvironment;
 use De\Idrinth\PhpCostEstimator\RuleSet;
 use PhpParser\Node;
 
@@ -20,7 +21,7 @@ final class UsesReflection implements \De\Idrinth\PhpCostEstimator\Rule
         return Cost::MEDIUM_LOW;
     }
 
-    public function applies(Node $astNode, string $phpEnvironment): bool
+    public function applies(Node $astNode): bool
     {
         return false;
     }
@@ -28,5 +29,10 @@ final class UsesReflection implements \De\Idrinth\PhpCostEstimator\Rule
     public function set(): RuleSet
     {
         return RuleSet::BUILD_PROCESS_ISSUE;
+    }
+
+    public function relevant(PHPEnvironment $phpEnvironment): bool
+    {
+        return PHPEnvironment::CLI !== $phpEnvironment;
     }
 }

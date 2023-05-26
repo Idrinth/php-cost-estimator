@@ -22,11 +22,8 @@ final class LocksFileSystem implements Rule
         return Cost::HIGH;
     }
 
-    public function applies(Node $astNode, PHPEnvironment $phpEnvironment): bool
+    public function applies(Node $astNode): bool
     {
-        if (PHPEnvironment::CLI === $phpEnvironment) {
-            return false;
-        }
         if (!($astNode instanceof Node\Expr\FuncCall))  {
             return false;
         }
@@ -42,5 +39,10 @@ final class LocksFileSystem implements Rule
     public function set(): RuleSet
     {
         return RuleSet::DESIGN_FLAW;
+    }
+
+    public function relevant(PHPEnvironment $phpEnvironment): bool
+    {
+        return PHPEnvironment::CLI !== $phpEnvironment;
     }
 }

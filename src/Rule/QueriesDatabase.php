@@ -21,7 +21,7 @@ final class QueriesDatabase implements \De\Idrinth\PhpCostEstimator\Rule
         return Cost::VERY_LOW;
     }
 
-    public function applies(Node $astNode, PHPEnvironment $phpEnvironment): bool
+    public function applies(Node $astNode): bool
     {
         return false;
     }
@@ -29,5 +29,10 @@ final class QueriesDatabase implements \De\Idrinth\PhpCostEstimator\Rule
     public function set(): RuleSet
     {
         return RuleSet::DESIGN_FLAW;
+    }
+
+    public function relevant(PHPEnvironment $phpEnvironment): bool
+    {
+        return true;
     }
 }
