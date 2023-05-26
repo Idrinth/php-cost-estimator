@@ -1,0 +1,10 @@
+#!/bin/php
+<?php
+declare(strict_types=1);
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+$app = new Symfony\Component\Console\Application('PhpCostEstimator', '0.0.0');
+$app->add(new De\Idrinth\PhpCostEstimator\Command\Initialize());
+$app->add(new De\Idrinth\PhpCostEstimator\Command\Check());
+$app->run();

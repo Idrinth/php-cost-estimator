@@ -1,0 +1,49 @@
+name: PHP Continuous Integration
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Cache Composer packages
+        id: composer-cache
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-
+      - name: Cache PHIVE packages
+        id: phive-cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.phive/phars/
+          key: ${{ runner.os }}-php-${{ hashFiles('**/phars.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-php-
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress
+      - name: Install PHIVE tools
+        uses: ngmy/phive-install-action@0.13.0
+        with:
+          phive-arguments: --force-accept-unsigned
+      - name: Run php linting
+        run: composer run-script phplint
+      - name: Run psr12 linting
+        run: composer run-script psr12lint
+      - name: Run requirements checker
+        run: composer run-script requirement
+      - name: Run mess detector
+        run: composer run-script mess
+      - name: Run unit tests
+        run: composer run-script test
+      - name: Run mutation tests
+        run: composer run-script infection

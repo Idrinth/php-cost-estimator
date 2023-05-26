@@ -1,0 +1,41 @@
+{
+  "name": "idrinth/php-cost-estimator",
+  "description": "A simple tool to estimate the cost of a php script change",
+  "type": "project",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Björn Büttner",
+      "email": "self@bjoern-buettner.me",
+      "homepage": "https://bjoern-buettner.me"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "De\\Idrinth\\PhpCostEstimator\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "De\\Idrinth\\PhpCostEstimator\\": "test/"
+    }
+  },
+  "require": {
+    "php": "^8.2",
+    "nikic/php-parser": "^4.15.5",
+    "roave/security-advisories": "dev-master",
+    "symfony/console": "*"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^10.1.3"
+  },
+  "scripts": {
+    "test": "phpunit",
+    "psr12lint": "./tools/phpcs --standard=PSR12 src/ test/ bin/",
+    "phplint": "./tools/parallel-lint --exclude vendor/ .",
+    "analyze": "./tools/phan",
+    "requirement": "./tools/requirement-checker",
+    "infection": "./tools/infection",
+    "mess": "./tools/phpmd src/ text phpmd.full.xml"
+  }
+}
