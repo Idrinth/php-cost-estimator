@@ -24,6 +24,18 @@ final class LocksFileSystem implements Rule
 
     public function applies(Node $astNode, PHPEnvironment $phpEnvironment): bool
     {
+        if (PHPEnvironment::CLI === $phpEnvironment) {
+            return false;
+        }
+        if (!($astNode instanceof Node\Expr\FuncCall))  {
+            return false;
+        }
+        if (!($astNode->name instanceof Node\Name)) {
+            return false;
+        }
+        if ($astNode->name->toLowerString() === 'flock') {
+            return true;
+        }
         return false;
     }
 

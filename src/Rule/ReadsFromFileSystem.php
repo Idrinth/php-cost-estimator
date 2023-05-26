@@ -24,6 +24,21 @@ final class ReadsFromFileSystem implements Rule
 
     public function applies(Node $astNode, PHPEnvironment $phpEnvironment): bool
     {
+        if (PHPEnvironment::CLI === $phpEnvironment) {
+            return false;
+        }
+        if (!($astNode instanceof Node\Expr\FuncCall))  {
+            return false;
+        }
+        if (!($astNode->name instanceof Node\Name)) {
+            return false;
+        }
+        if ($astNode->name->toLowerString() === 'file_get_contents') {
+            return true;
+        }
+        if ($astNode->name->toLowerString() === 'scandir') {
+            return true;
+        }
         return false;
     }
 

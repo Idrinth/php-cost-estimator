@@ -10,7 +10,7 @@ use Attribute;
 final class AssumedSize
 {
     public function __construct(
-        private readonly int $elements,
+        public readonly int $elements,
     ) {
     }
 }

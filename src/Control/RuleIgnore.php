@@ -10,7 +10,7 @@ use Attribute;
 final class RuleIgnore
 {
     public function __construct(
-        private readonly string $rule,
+        public readonly string $ruleClassName,
     ) {
     }
 }

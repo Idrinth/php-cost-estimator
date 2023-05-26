@@ -10,8 +10,8 @@ use Attribute;
 final class AssumedLoops
 {
     public function __construct(
-        private readonly int $factor,
-        private readonly string $variableName,
+        public readonly int $factor,
+        public readonly string $variableName,
     ) {
     }
 }

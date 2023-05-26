@@ -10,8 +10,8 @@ use Attribute;
 final class StartingPoint
 {
     public function __construct(
-        private readonly string $phpEnvironment,
-        private readonly int $callFactor,
+        public readonly string $phpEnvironment,
+        public readonly int $callFactor,
     ) {
     }
 }

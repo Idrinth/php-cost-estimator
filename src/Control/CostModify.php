@@ -10,8 +10,8 @@ use Attribute;
 final class CostModify
 {
     public function __construct(
-        private readonly string $rule,
-        private readonly int $cost,
+        public readonly string $ruleClassName,
+        public readonly int $cost,
     ) {
     }
 }
