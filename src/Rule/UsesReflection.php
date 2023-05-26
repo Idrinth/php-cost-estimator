@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace De\Idrinth\PhpCostEstimator\Rule;
@@ -9,7 +10,6 @@ use PhpParser\Node;
 
 final class UsesReflection implements \De\Idrinth\PhpCostEstimator\Rule
 {
-
     public function reasoning(): string
     {
         return 'Reflection on code that should be static can usually be replaced with a build process.';

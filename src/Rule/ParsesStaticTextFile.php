@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace De\Idrinth\PhpCostEstimator\Rule;
@@ -10,7 +11,6 @@ use PhpParser\Node;
 
 final class ParsesStaticTextFile implements \De\Idrinth\PhpCostEstimator\Rule
 {
-
     public function reasoning(): string
     {
         return 'It is an unnecessary effort to parse text(ini,json,yaml,xml) files if the values don\'t change.';

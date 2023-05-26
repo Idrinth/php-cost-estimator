@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace De\Idrinth\PhpCostEstimator\State;
@@ -34,6 +35,6 @@ final class CallCost implements Stringable
     public function __toString(): string
     {
         $cost = $this->cost * $this->calls;
-        return "{$this->name}: ({$cost})\n  ".implode("\n  ", $this->rules);
+        return "{$this->name}: ({$cost})\n  " . implode("\n  ", $this->rules);
     }
 }

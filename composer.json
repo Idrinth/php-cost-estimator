@@ -32,6 +32,7 @@
   "scripts": {
     "test": "phpdbg -qrr ./vendor/bin/phpunit",
     "psr12lint": "./tools/phpcs --standard=PSR12 src/ test/ bin/",
+    "psr12fix": "./tools/phpcbf --standard=PSR12 src/ test/ bin/",
     "phplint": "./tools/parallel-lint --exclude vendor/ .",
     "analyze": "./tools/phan",
     "requirement": "./tools/requirement-checker",

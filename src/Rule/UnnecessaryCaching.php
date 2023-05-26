@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace De\Idrinth\PhpCostEstimator\Rule;
@@ -11,7 +12,6 @@ use PhpParser\Node;
 
 final class UnnecessaryCaching implements Rule
 {
-
     public function reasoning(): string
     {
         return 'Caching uses up memory without any reason if it isn\'t used.';

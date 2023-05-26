@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace De\Idrinth\PhpCostEstimator\Rule;
@@ -11,7 +12,6 @@ use PhpParser\Node;
 
 final class ConnectsToUnusedDatabase implements Rule
 {
-
     public function reasoning(): string
     {
         return 'Any connection to another system is cost intensive.';
