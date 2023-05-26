@@ -7,6 +7,7 @@ namespace De\Idrinth\PhpCostEstimator\Configuration;
 use De\Idrinth\PhpCostEstimator\Configuration;
 use ReflectionClass;
 use ReflectionException;
+use RuntimeException;
 
 final class File implements Configuration
 {
@@ -20,14 +21,14 @@ final class File implements Configuration
      */
     private array $folders = [];
 
-    public function __construct(string $currentWorkingDirectory)
+    public function __construct(string $workingDirectory)
     {
-        if (!is_file($currentWorkingDirectory . '/.php-cost-estimator/config.php')) {
+        if (!is_file($workingDirectory . '/.php-cost-estimator/config.php')) {
             return;
         }
-        $data = include $currentWorkingDirectory . '/.php-cost-estimator/config.php';
+        $data = require $workingDirectory . '/.php-cost-estimator/config.php';
         if (!is_array($data)) {
-            throw new \RuntimeException('Invalid config file');
+            throw new RuntimeException('Invalid config file');
         }
         $this->rules = $data['rules'] ?? [];
         $this->version = $data['version'] ?? '';
