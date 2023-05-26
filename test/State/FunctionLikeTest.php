@@ -22,8 +22,11 @@ final class FunctionLikeTest extends TestCase
     }
     #[DataProvider('provideCalculations')]
     #[Test]
-    public function calculationsOfCostMatch(int $expectation, FunctionLike $functionLike, PHPEnvironment $environment): void
-    {
+    public function calculationsOfCostMatch(
+        int $expectation,
+        FunctionLike $functionLike,
+        PHPEnvironment $environment
+    ): void {
         $this->assertSame($expectation, $functionLike->cost($environment));
     }
 }

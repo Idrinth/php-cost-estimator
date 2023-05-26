@@ -24,7 +24,7 @@ final class LocksFileSystem implements Rule
 
     public function applies(Node $astNode): bool
     {
-        if (!($astNode instanceof Node\Expr\FuncCall))  {
+        if (!($astNode instanceof Node\Expr\FuncCall)) {
             return false;
         }
         if (!($astNode->name instanceof Node\Name)) {
