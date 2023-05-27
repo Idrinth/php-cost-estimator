@@ -36,9 +36,24 @@ class Check extends Command
     protected function configure(): void
     {
         $this->setDescription('Checks the codebase for possible performance issues');
-        $this->addOption('check-cleaned-dependencies', 'c', InputOption::VALUE_NONE, 'Check cleaned dependencies');
-        $this->addOption('check-optimized-autoloader', 'o', InputOption::VALUE_NONE, 'Check optimized autoloader');
-        $this->addOption('rule', 'r', InputOption::VALUE_REQUIRED|InputOption::VALUE_IS_ARRAY, 'Enable additional rules');
+        $this->addOption(
+            'check-cleaned-dependencies',
+            'c',
+            InputOption::VALUE_NONE,
+            'Check cleaned dependencies'
+        );
+        $this->addOption(
+            'check-optimized-autoloader',
+            'o',
+            InputOption::VALUE_NONE,
+            'Check optimized autoloader'
+        );
+        $this->addOption(
+            'rule',
+            'r',
+            InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
+            'Enable additional rules'
+        );
     }
     private function iterateFolder(string $folder, CallableList &$callables, OutputInterface $output): void
     {
