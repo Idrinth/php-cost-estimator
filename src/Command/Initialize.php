@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace De\Idrinth\PhpCostEstimator\Command;
 
+use De\Idrinth\PhpCostEstimator\Control\StartingPoint;
+use De\Idrinth\PhpCostEstimator\PHPEnvironment;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -18,6 +20,7 @@ class Initialize extends Command
     {
         $this->setDescription('Initializes the tool\'s configuration file with sensible defaults');
     }
+    #[StartingPoint(PHPEnvironment::CLI, 1)]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $file = getcwd() . '/.php-cost-estimator/config.php';
@@ -26,7 +29,7 @@ class Initialize extends Command
             return 0;
         }
         $output->writeln('Initializing configuration file');
-        @mkdir(dirname($file));
+        mkdir(dirname($file));
         $rules = [];
         $output->writeln('Scanning for rules');
         foreach (scandir(__DIR__ . '/../Rule') as $rule) {

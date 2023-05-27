@@ -20,6 +20,9 @@ final class ConfigurationReader extends NodeVisitorAbstract
     }
     public function enterNode(Node $node): ?int
     {
+        if (!$node instanceof Node\Stmt\Function_ && !$node instanceof Node\Stmt\ClassMethod) {
+            return null;
+        }
         if (!($node->name instanceof Node\Identifier)) {
             return null;
         }

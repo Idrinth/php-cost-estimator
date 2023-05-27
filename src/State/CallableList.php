@@ -56,7 +56,6 @@ final class CallableList implements IteratorAggregate
     }
     public function registerDefinition(
         string $name,
-        ?PHPEnvironment $environment,
         Rule ...$matchedRules
     ): void {
         if (!isset($this->callables[$name])) {
@@ -64,9 +63,6 @@ final class CallableList implements IteratorAggregate
         }
         foreach ($matchedRules as $rule) {
             $this->callables[$name]->registerRule($rule);
-        }
-        if ($environment instanceof PHPEnvironment) {
-            $this->callables[$name]->markStart($environment);
         }
     }
 

@@ -35,6 +35,9 @@ final class Merged implements Configuration
         return '';
     }
 
+    /**
+     * @return iterable<string>
+     */
     public function foldersToScan(): iterable
     {
         foreach ($this->configurations as $configuration) {
