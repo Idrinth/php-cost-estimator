@@ -12,20 +12,6 @@ return [
         'vendor/'
     ],
     'skip_slow_php_options_warning' => false,
-    'autoload_internal_extension_signatures' => [
-        'ast'         => '.phan/internal_stubs/ast.phan_php',
-        'ctype'       => '.phan/internal_stubs/ctype.phan_php',
-        'igbinary'    => '.phan/internal_stubs/igbinary.phan_php',
-        'mbstring'    => '.phan/internal_stubs/mbstring.phan_php',
-        'pcntl'       => '.phan/internal_stubs/pcntl.phan_php',
-        'phar'        => '.phan/internal_stubs/phar.phan_php',
-        'posix'       => '.phan/internal_stubs/posix.phan_php',
-        'readline'    => '.phan/internal_stubs/readline.phan_php',
-        'simplexml'   => '.phan/internal_stubs/simplexml.phan_php',
-        'sysvmsg'     => '.phan/internal_stubs/sysvmsg.phan_php',
-        'sysvsem'     => '.phan/internal_stubs/sysvsem.phan_php',
-        'sysvshm'     => '.phan/internal_stubs/sysvshm.phan_php',
-    ],
     'ignore_undeclared_functions_with_known_signatures' => false,
     'plugin_config' => [
         'php_native_syntax_check_max_processes' => 4,

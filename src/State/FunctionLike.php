@@ -7,9 +7,8 @@ namespace De\Idrinth\PhpCostEstimator\State;
 use De\Idrinth\PhpCostEstimator\Cost;
 use De\Idrinth\PhpCostEstimator\PHPEnvironment;
 use De\Idrinth\PhpCostEstimator\Rule;
-use Stringable;
 
-final class FunctionLike implements Stringable
+final class FunctionLike
 {
     /**
      * @var Rule[]
@@ -30,7 +29,7 @@ final class FunctionLike implements Stringable
     {
         return $this->name;
     }
-    public function cost(PHPEnvironment $environment): int
+    public function cost(PHPEnvironment $environment, int $callFactor = 1): int
     {
         $cost = 0;
         foreach ($this->matchedRules as $rule) {
@@ -49,7 +48,7 @@ final class FunctionLike implements Stringable
         foreach ($this->children as $child) {
             $cost += $child->callee->cost($environment) * $child->count;
         }
-        return $cost;
+        return $cost * $callFactor;
     }
     public function matchedRules(): array
     {
@@ -76,8 +75,12 @@ final class FunctionLike implements Stringable
     {
         $this->matchedRules[] = $rule;
     }
-    public function __toString(): string
+
+    /**
+     * @return iterable<FunctionLikeCallCount>
+     */
+    public function children(): iterable
     {
-        return "{$this->name}: ({$this->cost()})\n  " . implode("\n  ", $this->matchedRules);
+        yield from $this->children;
     }
 }

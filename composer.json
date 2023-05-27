@@ -41,9 +41,18 @@
     "psr12lint": "./tools/phpcs --standard=PSR12 src/ test/ bin/",
     "psr12fix": "./tools/phpcbf --standard=PSR12 src/ test/ bin/",
     "phplint": "./tools/parallel-lint --exclude vendor/ .",
-    "analyze": "./tools/phan",
+    "analyze": "./tools/phan --allow-polyfill-parser",
     "requirement": "./tools/composer-require-checker",
     "infection": "phpdbg -qrr ./tools/infection",
-    "mess": "./tools/phpmd src/ text phpmd.full.xml"
+    "mess": "./tools/phpmd src/ text phpmd.full.xml",
+    "ci": [
+      "@phplint",
+      "@psr12lint",
+      "@analyze",
+      "@requirement",
+      "@mess",
+      "@test",
+      "@infection"
+    ]
   }
 }

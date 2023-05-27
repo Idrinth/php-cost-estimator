@@ -15,21 +15,50 @@ final class CallableList implements IteratorAggregate
      * @var FunctionLike[]
      */
     private array $callables = [];
-    public function getIterator(): Generator
-    {
-        foreach ($this->callables as $callable) {
-            if (($this->calls[$callable->name()] ?? 0) > 0) {
-                yield new CallCost(
-                    $callable->name(),
-                    $callable->cost(),
-                    $this->calls[$callable->name()] ?? 0,
-                    ...$callable->matchedRules()
+    private function children(
+        FunctionLike $callable,
+        PHPEnvironment $environment,
+        int $callCount = 1,
+        int $indent = 0,
+    ): Generator {
+        $cost = $callable->cost($environment, $callCount);
+        if ($cost === 0) {
+            return;
+        }
+        $rules = [];
+        foreach ($callable->matchedRules() as $rule) {
+            if ($rule->relevant($environment)) {
+                $rules[] = basename(get_class($rule));
+            }
+        }
+        yield str_repeat('  ', $indent)
+            . "{$callable->name()}@{$environment->name} => {$cost}"
+            . implode(', ', $rules);
+        foreach ($callable->children() as $child) {
+            if ($child->count > 0) {
+                yield from $this->children(
+                    $child->callee,
+                    $environment,
+                    $child->count * $callCount,
+                    $indent + 1
                 );
             }
         }
     }
-    public function registerDefinition(string $name, ?PHPEnvironment $environment, Rule ...$matchedRules): void
+    public function getIterator(): Generator
     {
+        foreach ($this->callables as $callable) {
+            if ($callable->isRoot()) {
+                $environment = $callable->environment();
+                yield from $this->children($callable, $environment);
+            }
+        }
+    }
+    public function registerDefinition(
+        string $name,
+        ?PHPEnvironment $environment,
+        Rule ...$matchedRules
+    ): void {
         if (!isset($this->callables[$name])) {
             $this->callables[$name] = new FunctionLike($name);
         }
@@ -53,5 +82,13 @@ final class CallableList implements IteratorAggregate
             $this->callables[$called] = new FunctionLike($called);
         }
         $this->callables[$context]->registerCallee($this->callables[$called], $count);
+    }
+
+    public function markStart(string $name, PHPEnvironment $environment): void
+    {
+        if (!isset($this->callables[$name])) {
+            $this->callables[$name] = new FunctionLike($name);
+        }
+        $this->callables[$name]->markStart($environment);
     }
 }

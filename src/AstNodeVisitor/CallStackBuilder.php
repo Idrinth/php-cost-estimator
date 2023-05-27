@@ -10,17 +10,19 @@ use PhpParser\NodeVisitorAbstract;
 
 final class CallStackBuilder extends NodeVisitorAbstract
 {
-    private string $context;
-    private CallableList $callableList;
+    private string $context = '';
+    public function __construct(private readonly CallableList $callableList)
+    {
+    }
 
     public function enterNode(Node $node): ?int
     {
         if ($node instanceof Node\Expr\FuncCall) {
-            $this->callableList->registerCallee($this->context, $node->name->toString());
+            $this->callableList->registerCallee($this->context, $node->name->toString(), 1);
             return null;
         }
-        if ($node instanceof FunctionLike) {
-            return NodeTraverser::DONT_TRAVERSE_CHILDREN;
+        if ($node instanceof Node\FunctionLike && $node->name instanceof Node\Identifier) {
+            $this->context = $node->name->toString();
         }
         return null;
     }
