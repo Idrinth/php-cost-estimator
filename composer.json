@@ -43,7 +43,7 @@
     "phplint": "./tools/parallel-lint --exclude vendor/ .",
     "analyze": "./tools/phan --allow-polyfill-parser",
     "requirement": "./tools/composer-require-checker",
-    "infection": "phpdbg -qrr ./tools/infection",
+    "infection": "./tools/infection",
     "mess": "./tools/phpmd src/ text phpmd.full.xml",
     "ci": [
       "@phplint",

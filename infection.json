@@ -8,5 +8,8 @@
   },
   "mutators": {
     "@default": true
+  },
+  "logs": {
+    "text": "infection.log"
   }
 }

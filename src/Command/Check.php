@@ -17,6 +17,8 @@ use De\Idrinth\PhpCostEstimator\State\RuleList;
 use PhpParser\Lexer;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeTraverserInterface;
+use PhpParser\NodeVisitor\FindingVisitor;
+use PhpParser\NodeVisitor\NameResolver;
 use PhpParser\Parser;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -74,6 +76,7 @@ class Check extends Command
     {
         $config = new Merged(new File(getcwd()), new Cli($input));
         $callables = new CallableList();
+        $this->traverser->addVisitor(new NameResolver());
         $this->traverser->addVisitor(new CallStackBuilder($callables));
         $this->traverser->addVisitor(new ConfigurationReader($callables));
         $this->traverser->addVisitor(new RuleChecker($callables, new RuleList(...$config->ruleWhitelist())));
