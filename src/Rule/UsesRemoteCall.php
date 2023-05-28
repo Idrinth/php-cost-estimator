@@ -24,7 +24,7 @@ class UsesRemoteCall implements Rule
 
     public function applies(Node $astNode): bool
     {
-        return true;
+        return false;
     }
 
     public function set(): RuleSet

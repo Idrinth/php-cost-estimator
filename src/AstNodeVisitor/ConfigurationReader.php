@@ -9,41 +9,44 @@ use De\Idrinth\PhpCostEstimator\Control\AssumedSize;
 use De\Idrinth\PhpCostEstimator\Control\CostModify;
 use De\Idrinth\PhpCostEstimator\Control\RuleIgnore;
 use De\Idrinth\PhpCostEstimator\Control\StartingPoint;
+use De\Idrinth\PhpCostEstimator\PHPEnvironment;
 use De\Idrinth\PhpCostEstimator\State\CallableList;
 use PhpParser\Node;
 use PhpParser\NodeVisitorAbstract;
 
 final class ConfigurationReader extends NodeVisitorAbstract
 {
+    private string $class = '';
+    private string $namespace = '';
+    private string $method = '';
+
     public function __construct(private readonly CallableList $callableList)
     {
     }
     public function enterNode(Node $node): ?int
     {
-        if (!$node instanceof Node\Stmt\Function_ && !$node instanceof Node\Stmt\ClassMethod) {
-            return null;
+        if ($node instanceof Node\Stmt\Namespace_) {
+            $this->namespace = $node->name->toString();
         }
-        if (!($node->name instanceof Node\Identifier)) {
-            return null;
+        if ($node instanceof Node\Stmt\ClassLike) {
+            $this->class = $node->name->toString();
         }
-        if ($node->hasAttribute(AssumedLoops::class)) {
-            //track;
+        if ($node instanceof Node\Stmt\ClassMethod) {
+            $this->method = $node->name->toString();
         }
-        if ($node->hasAttribute(AssumedSize::class)) {
-            //track;
-        }
-        if ($node->hasAttribute(CostModify::class)) {
-            //track;
-        }
-        if ($node->hasAttribute(RuleIgnore::class)) {
-            //track;
-        }
-        if ($node->hasAttribute(StartingPoint::class)) {
+        if ($node instanceof Node\Attribute && $node->name->toString() === 'StartingPoint') {
             $this->callableList->markStart(
-                $node->name->toString(),
-                $node->getAttribute(StartingPoint::class)->environment
+                $this->namespace . '\\' . $this->class . '::' . $this->method,
+                $node->args[0]->value->name->toString() === 'CLI' ? PHPEnvironment::CLI : PHPEnvironment::SERVER,
             );
         }
+        return null;
+    }
+    public function afterTraverse(array $nodes): null
+    {
+        $this->class = '';
+        $this->namespace = '';
+        $this->method = '';
         return null;
     }
 }

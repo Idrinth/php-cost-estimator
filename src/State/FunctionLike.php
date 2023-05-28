@@ -35,12 +35,12 @@ final class FunctionLike
         foreach ($this->matchedRules as $rule) {
             if ($rule->relevant($environment)) {
                 match ($rule->cost()) {
-                    Cost::LOW => $cost += 2,
-                    Cost::MEDIUM => $cost += 8,
-                    Cost::HIGH => $cost += 32,
                     Cost::VERY_LOW => $cost += 1,
+                    Cost::LOW => $cost += 2,
                     Cost::MEDIUM_LOW => $cost += 4,
+                    Cost::MEDIUM => $cost += 8,
                     Cost::MEDIUM_HIGH => $cost += 16,
+                    Cost::HIGH => $cost += 32,
                     Cost::VERY_HIGH => $cost += 64,
                 };
             }

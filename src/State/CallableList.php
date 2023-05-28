@@ -49,6 +49,7 @@ final class CallableList implements IteratorAggregate
     {
         foreach ($this->callables as $callable) {
             if ($callable->isRoot()) {
+                var_dump($callable->name());
                 $environment = $callable->environment();
                 yield from $this->children($callable, $environment);
             }

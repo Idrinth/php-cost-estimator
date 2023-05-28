@@ -39,14 +39,4 @@ final class RuleList implements Iterator
     {
         $this->position = 0;
     }
-    public function without(string ...$classnames): self
-    {
-        $rules = [];
-        foreach ($this->rules as $rule) {
-            if (!in_array(get_class($rule), $classnames, true)) {
-                $rules[] = $rule;
-            }
-        }
-        return new self(...$rules);
-    }
 }

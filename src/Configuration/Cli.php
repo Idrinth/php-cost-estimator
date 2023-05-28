@@ -9,10 +9,10 @@ use ReflectionClass;
 use ReflectionException;
 use Symfony\Component\Console\Input\InputInterface;
 
-final class Cli implements Configuration
+final readonly class Cli implements Configuration
 {
     public function __construct(
-        private readonly InputInterface $input
+        private InputInterface $input
     ) {
     }
     /**

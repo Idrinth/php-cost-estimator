@@ -7,10 +7,10 @@ namespace De\Idrinth\PhpCostEstimator\Control;
 use Attribute;
 
 #[Attribute(Attribute::TARGET_PARAMETER | Attribute::TARGET_PROPERTY)]
-final class AssumedSize
+final readonly class AssumedSize
 {
     public function __construct(
-        public readonly int $elements,
+        public int $elements,
     ) {
     }
 }

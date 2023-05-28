@@ -12,15 +12,21 @@ use PhpParser\NodeVisitorAbstract;
 final class RuleChecker extends NodeVisitorAbstract
 {
     private array $matchedRules = [];
-    private string $context = '';
-    public function __construct(private CallableList $callableList, private readonly RuleList $ruleList)
+    private string $namespace = '';
+    private string $class = '';
+    public function __construct(private readonly CallableList $callableList, private readonly RuleList $ruleList)
     {
     }
     public function enterNode(Node $node): ?int
     {
+        if ($node instanceof Node\Stmt\Namespace_) {
+            $this->namespace = $node->name->toString();
+        }
+        if ($node instanceof Node\Stmt\ClassLike && $node->name instanceof Node\Identifier) {
+            $this->class = $node->name->toString();
+        }
         if ($node instanceof Node\Stmt\Function_ || $node instanceof Node\Stmt\ClassMethod) {
             $this->matchedRules = [];
-            $this->context = $node->name->toString();
         }
         foreach ($this->ruleList as $rule) {
             if ($rule->applies($node)) {
@@ -31,14 +37,29 @@ final class RuleChecker extends NodeVisitorAbstract
     }
     public function leaveNode(Node $node): null
     {
-        if ($node instanceof Node\Stmt\Function_ || $node instanceof Node\Stmt\ClassMethod) {
+        if ($node instanceof Node\Stmt\ClassLike) {
+            $this->class = '';
+        }
+        if ($node instanceof Node\Stmt\Function_) {
             $this->callableList->registerDefinition(
-                $this->context,
+                $this->namespace . '\\' . $node->name->toString(),
                 ...$this->matchedRules
             );
             $this->matchedRules = [];
-            $this->context = '';
         }
+        if ($node instanceof Node\Stmt\ClassMethod) {
+            $this->callableList->registerDefinition(
+                $this->namespace . '\\' . $this->class . '::' . $node->name->toString(),
+                ...$this->matchedRules
+            );
+            $this->matchedRules = [];
+        }
+        return null;
+    }
+    public function afterTraverse(array $nodes): null
+    {
+        $this->class = '';
+        $this->namespace = '';
         return null;
     }
 }
