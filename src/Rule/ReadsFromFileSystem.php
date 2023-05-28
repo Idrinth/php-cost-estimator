@@ -36,6 +36,12 @@ final class ReadsFromFileSystem implements Rule
         if ($astNode->name->toLowerString() === 'scandir') {
             return true;
         }
+        if ($astNode->name->toLowerString() === 'is_dir') {
+            return true;
+        }
+        if ($astNode->name->toLowerString() === 'is_file') {
+            return true;
+        }
         return false;
     }
 

@@ -24,6 +24,12 @@ final class UsesArrayKeyExists implements Rule
 
     public function applies(Node $astNode): bool
     {
+        if (!($astNode instanceof Node\Expr\FuncCall)) {
+            return false;
+        }
+        if ($astNode->name->toString() === 'array_key_exists') {
+            return true;
+        }
         return false;
     }
 

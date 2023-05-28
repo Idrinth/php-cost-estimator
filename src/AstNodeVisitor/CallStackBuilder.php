@@ -12,7 +12,7 @@ final class CallStackBuilder extends NodeVisitorAbstract
 {
     private string $namespace = '';
     private string $class = '';
-    private string $context;
+    private string $context = '';
 
     public function __construct(private readonly CallableList $callableList)
     {
@@ -27,7 +27,7 @@ final class CallStackBuilder extends NodeVisitorAbstract
             $this->class = $node->name->toString();
         }
         if ($node instanceof Node\Expr\FuncCall) {
-            $this->callableList->registerCallee($this->context, $this->namespace . '\\' . $node->name->toString(), 1);
+            $this->callableList->registerCallee($this->context, $node->name->toString(), 1);
         }
         if ($node instanceof Node\Stmt\ClassMethod && $node->name instanceof Node\Identifier) {
             $this->context = $this->namespace . '\\' . $this->class . '::' . $node->name->toString();

@@ -35,20 +35,20 @@ final class FunctionLike
         foreach ($this->matchedRules as $rule) {
             if ($rule->relevant($environment)) {
                 match ($rule->cost()) {
-                    Cost::VERY_LOW => $cost += 1,
-                    Cost::LOW => $cost += 2,
-                    Cost::MEDIUM_LOW => $cost += 4,
-                    Cost::MEDIUM => $cost += 8,
-                    Cost::MEDIUM_HIGH => $cost += 16,
-                    Cost::HIGH => $cost += 32,
-                    Cost::VERY_HIGH => $cost += 64,
+                    Cost::VERY_LOW => $cost += 1 * $callFactor,
+                    Cost::LOW => $cost += 2 * $callFactor,
+                    Cost::MEDIUM_LOW => $cost += 4 * $callFactor,
+                    Cost::MEDIUM => $cost += 8 * $callFactor,
+                    Cost::MEDIUM_HIGH => $cost += 16 * $callFactor,
+                    Cost::HIGH => $cost += 32 * $callFactor,
+                    Cost::VERY_HIGH => $cost += 64 * $callFactor,
                 };
             }
         }
         foreach ($this->children as $child) {
-            $cost += $child->callee->cost($environment) * $child->count;
+            $cost += $child->callee->cost($environment, $child->count * $callFactor);
         }
-        return $cost * $callFactor;
+        return $cost;
     }
     public function matchedRules(): array
     {

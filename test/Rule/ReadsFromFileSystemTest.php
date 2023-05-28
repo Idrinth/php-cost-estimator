@@ -22,7 +22,13 @@ final class ReadsFromFileSystemTest extends TestCase
             ],
             'scandir' => [
                 new FuncCall(new Node\Name('scandir')),
-            ]
+            ],
+            'is_file' => [
+                new FuncCall(new Node\Name('is_file')),
+            ],
+            'is_dir' => [
+                new FuncCall(new Node\Name('is_dir')),
+            ],
         ];
     }
     #[Test]

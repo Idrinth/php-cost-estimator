@@ -5,6 +5,6 @@ namespace De\Idrinth\PhpCostEstimator;
 enum PHPEnvironment
 {
     case CLI;
-    case SERVER;
+    case WEB;
     case BOTH;
 }

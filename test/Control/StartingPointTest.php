@@ -13,8 +13,8 @@ class StartingPointTest extends TestCase
     #[Test]
     public function providesValuesUsedInConstruction(): void
     {
-        $sut = new StartingPoint(PHPEnvironment::SERVER, 90);
+        $sut = new StartingPoint(PHPEnvironment::WEB, 90);
         self::assertSame(90, $sut->callFactor);
-        self::assertSame(PHPEnvironment::SERVER, $sut->phpEnvironment);
+        self::assertSame(PHPEnvironment::WEB, $sut->phpEnvironment);
     }
 }

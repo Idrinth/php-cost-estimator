@@ -37,7 +37,7 @@ final class ConfigurationReader extends NodeVisitorAbstract
         if ($node instanceof Node\Attribute && $node->name->toString() === 'StartingPoint') {
             $this->callableList->markStart(
                 $this->namespace . '\\' . $this->class . '::' . $this->method,
-                $node->args[0]->value->name->toString() === 'CLI' ? PHPEnvironment::CLI : PHPEnvironment::SERVER,
+                $node->args[0]->value->name->toString() === 'CLI' ? PHPEnvironment::CLI : PHPEnvironment::WEB,
             );
         }
         return null;
