@@ -22,17 +22,17 @@ jobs:
         uses: actions/cache@v3
         with:
           path: vendor
-          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
-            ${{ runner.os }}-php-
+            ${{ runner.os }}-composer-
       - name: Cache PHIVE packages
         id: phive-cache
         uses: actions/cache@v3
         with:
           path: /home/runner/.phive/phars/
-          key: ${{ runner.os }}-php-${{ hashFiles('**/phars.xml') }}
+          key: ${{ runner.os }}-phive-${{ hashFiles('**/phars.xml') }}
           restore-keys: |
-            ${{ runner.os }}-php-
+            ${{ runner.os }}-phive-
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress
       - name: Install PHIVE tools
