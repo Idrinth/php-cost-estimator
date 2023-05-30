@@ -28,7 +28,6 @@ class CliTest extends TestCase
         self::assertTrue($configuration->checkCleanedDependencies());
         self::assertTrue($configuration->checkOptimizedAutoloader());
         self::assertSame(BuildsUnusedObject::class, get_class(iterator_to_array($configuration->ruleWhitelist())[0]));
-        self::assertSame('', $configuration->phpVersion());
         self::assertSame([], iterator_to_array($configuration->foldersToScan()));
     }
 }

@@ -26,11 +26,6 @@ final readonly class Cli implements Configuration
         }
     }
 
-    public function phpVersion(): string
-    {
-        return '';
-    }
-
     /**
      * @inheritDoc
      */

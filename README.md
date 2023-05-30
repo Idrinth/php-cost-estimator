@@ -34,7 +34,7 @@ return [
         'De\\Idrinth\\PhpCostEstimator\\Rule\\QueriesDatabase',
         'De\\Idrinth\\PhpCostEstimator\\Rule\\ReadsFromFileSystem',
         'De\\Idrinth\\PhpCostEstimator\\Rule\\UnnecessaryCaching',
-        'De\\Idrinth\\PhpCostEstimator\\Rule\\UnnecessaryTypeDeclarations',
+        'De\\Idrinth\\PhpCostEstimator\\Rule\\UnnecessaryTypeDeclaration',
         'De\\Idrinth\\PhpCostEstimator\\Rule\\UsesArrayKeyExists',
         'De\\Idrinth\\PhpCostEstimator\\Rule\\UsesFallbackToRootNamespace',
         'De\\Idrinth\\PhpCostEstimator\\Rule\\UsesInArrayOnLargeArray',

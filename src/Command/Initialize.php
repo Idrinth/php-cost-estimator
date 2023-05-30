@@ -43,11 +43,9 @@ class Initialize extends Command
             $file,
             str_replace(
                 [
-                    '%%PHP_VERSION%%',
                     '##RULES##',
                 ],
                 [
-                    explode('-', PHP_VERSION)[0],
                     "'" . implode("',\n        '", $rules) . "',",
                 ],
                 file_get_contents(__DIR__ . '/../../.php-cost-estimator/default.php'),

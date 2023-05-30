@@ -24,17 +24,6 @@ final class Merged implements Configuration
         }
     }
 
-    public function phpVersion(): string
-    {
-        foreach ($this->configurations as $configuration) {
-            $version = $configuration->phpVersion();
-            if ($version !== '') {
-                return $version;
-            }
-        }
-        return '';
-    }
-
     /**
      * @return iterable<string>
      */

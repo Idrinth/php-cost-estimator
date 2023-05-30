@@ -10,7 +10,6 @@ use PhpParser\NodeVisitorAbstract;
 
 final class CallStackBuilder extends NodeVisitorAbstract
 {
-    private string $namespace = '';
     private string $class = '';
     private string $context = '';
 
@@ -20,21 +19,27 @@ final class CallStackBuilder extends NodeVisitorAbstract
 
     public function enterNode(Node $node): ?int
     {
-        if ($node instanceof Node\Stmt\Namespace_) {
-            $this->namespace = $node->name->toString();
-        }
         if ($node instanceof Node\Stmt\ClassLike && $node->name instanceof Node\Identifier) {
-            $this->class = $node->name->toString();
+            $this->class = $node->namespacedName->toString();
+        }
+        if ($node instanceof Node\Stmt\ClassMethod) {
+            $this->context = $this->class . '::' . $node->name->toString();
         }
         if ($node instanceof Node\Expr\FuncCall) {
             $this->callableList->registerCallee($this->context, $node->name->toString(), 1);
         }
-        if ($node instanceof Node\Stmt\ClassMethod && $node->name instanceof Node\Identifier) {
-            $this->context = $this->namespace . '\\' . $this->class . '::' . $node->name->toString();
+        if ($node instanceof Node\Expr\MethodCall && $node->var->hasAttribute('idrinth-type')) {
+            $this->callableList->registerCallee($this->context, $node->var->getAttribute('idrinth-type') . '::' . $node->name->toString(), 1);
         }
-        if ($node instanceof Node\Stmt\Function_ && $node->name instanceof Node\Identifier) {
-            $this->context = $this->namespace . '\\' . $node->name->toString();
+        if ($node instanceof Node\Expr\StaticCall) {
+            $this->callableList->registerCallee($this->context, $node->class->toString() . '::' . $node->name->toString(), 1);
         }
+        return null;
+    }
+    public function beforeTraverse(array $nodes): null
+    {
+        $this->context = '';
+        $this->class = '';
         return null;
     }
 }

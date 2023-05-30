@@ -27,6 +27,18 @@ final class UsesStaticComparisonTest extends TestCase
                     new Node\Scalar\String_('7.4.0'),
                 ),
             ],
+            '1==2' => [
+                new Node\Expr\BinaryOp\Equal(
+                    new Node\Scalar\LNumber(1),
+                    new Node\Scalar\LNumber(2),
+                ),
+            ],
+            '1>2' => [
+                new Node\Expr\BinaryOp\Greater(
+                    new Node\Scalar\LNumber(1),
+                    new Node\Scalar\LNumber(2),
+                ),
+            ],
         ];
     }
     #[Test]

@@ -7,7 +7,7 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(AssumedSize::class)]
-class AssumedSizeTest extends TestCase
+final class AssumedSizeTest extends TestCase
 {
     #[Test]
     public function providesValuesUsedInConstruction(): void

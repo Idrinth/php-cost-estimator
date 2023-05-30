@@ -15,7 +15,6 @@ final class File implements Configuration
      * @var string[]
      */
     private array $rules = [];
-    private string $version = '';
     /**
      * @var string[]
      */
@@ -35,9 +34,8 @@ final class File implements Configuration
             throw new RuntimeException('Invalid config file');
         }
         $this->rules = $data['rules'] ?? [];
-        $this->version = $data['version'] ?? '';
         $this->folders = $data['folders'] ?? [];
-        $this->minSeverity = $data['minSeverity'] ?? 0;
+        $this->minSeverity = $data['minSeverity'] ?? 1;
     }
 
     /**
@@ -48,11 +46,6 @@ final class File implements Configuration
         foreach ($this->rules as $rule) {
             yield (new ReflectionClass($rule))->newInstance();
         }
-    }
-
-    public function phpVersion(): string
-    {
-        return $this->version;
     }
 
     public function foldersToScan(): iterable

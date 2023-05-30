@@ -8,7 +8,7 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(StartingPoint::class)]
-class StartingPointTest extends TestCase
+final class StartingPointTest extends TestCase
 {
     #[Test]
     public function providesValuesUsedInConstruction(): void

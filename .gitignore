@@ -4,3 +4,4 @@
 /.phpunit.cache
 /coverage
 /infection.log
+/.phpunit.result.cache

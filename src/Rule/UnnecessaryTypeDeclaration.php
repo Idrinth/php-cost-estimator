@@ -9,8 +9,9 @@ use De\Idrinth\PhpCostEstimator\PHPEnvironment;
 use De\Idrinth\PhpCostEstimator\Rule;
 use De\Idrinth\PhpCostEstimator\RuleSet;
 use PhpParser\Node;
+use PHPUnit\Event\Code\ClassMethod;
 
-final class UnnecessaryTypeDeclarations implements Rule
+final class UnnecessaryTypeDeclaration implements Rule
 {
     public function reasoning(): string
     {
@@ -24,6 +25,22 @@ final class UnnecessaryTypeDeclarations implements Rule
 
     public function applies(Node $astNode): bool
     {
+        if ($astNode instanceof Node\Stmt\ClassMethod) {
+            if ($astNode->isPrivate()) {
+                foreach ($astNode->params as $param) {
+                    if ($param->type !== null) {
+                        return true;
+                    }
+                }
+            }
+        }
+        if ($astNode instanceof Node\Stmt\Property) {
+            if ($astNode->isPrivate()) {
+                if ($astNode->type !== null) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 

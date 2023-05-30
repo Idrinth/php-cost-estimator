@@ -27,6 +27,19 @@ class UsesStaticComparison implements Rule
         if (!($astNode instanceof Node\Expr\BinaryOp)) {
             return false;
         }
+        if (!(
+            $astNode instanceof Node\Expr\BinaryOp\Equal ||
+            $astNode instanceof Node\Expr\BinaryOp\NotEqual ||
+            $astNode instanceof Node\Expr\BinaryOp\Identical ||
+            $astNode instanceof Node\Expr\BinaryOp\NotIdentical ||
+            $astNode instanceof Node\Expr\BinaryOp\Greater ||
+            $astNode instanceof Node\Expr\BinaryOp\GreaterOrEqual ||
+            $astNode instanceof Node\Expr\BinaryOp\Smaller ||
+            $astNode instanceof Node\Expr\BinaryOp\SmallerOrEqual ||
+            $astNode instanceof Node\Expr\BinaryOp\Spaceship
+        )) {
+            return false;
+        }
         if ($astNode->left instanceof Node\Scalar && $astNode->right instanceof Node\Scalar) {
             return true;
         }

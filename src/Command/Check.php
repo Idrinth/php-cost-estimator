@@ -6,6 +6,10 @@ namespace De\Idrinth\PhpCostEstimator\Command;
 
 use De\Idrinth\PhpCostEstimator\AstNodeVisitor\CallStackBuilder;
 use De\Idrinth\PhpCostEstimator\AstNodeVisitor\ConfigurationReader;
+use De\Idrinth\PhpCostEstimator\AstNodeVisitor\DeLooper;
+use De\Idrinth\PhpCostEstimator\AstNodeVisitor\FallbackToRootNamespaceChecker;
+use De\Idrinth\PhpCostEstimator\AstNodeVisitor\FunctionListBuilder;
+use De\Idrinth\PhpCostEstimator\AstNodeVisitor\TypeResolver;
 use De\Idrinth\PhpCostEstimator\AstNodeVisitor\RuleChecker;
 use De\Idrinth\PhpCostEstimator\Configuration\Cli;
 use De\Idrinth\PhpCostEstimator\Configuration\File;
@@ -13,11 +17,11 @@ use De\Idrinth\PhpCostEstimator\Configuration\Merged;
 use De\Idrinth\PhpCostEstimator\Control\StartingPoint;
 use De\Idrinth\PhpCostEstimator\PHPEnvironment;
 use De\Idrinth\PhpCostEstimator\State\CallableList;
+use De\Idrinth\PhpCostEstimator\State\FunctionDefinitionList;
 use De\Idrinth\PhpCostEstimator\State\RuleList;
 use PhpParser\Lexer;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeTraverserInterface;
-use PhpParser\NodeVisitor\FindingVisitor;
 use PhpParser\NodeVisitor\NameResolver;
 use PhpParser\Parser;
 use Symfony\Component\Console\Command\Command;
@@ -28,12 +32,16 @@ use Symfony\Component\Console\Output\OutputInterface;
 class Check extends Command
 {
     private Parser $parser;
-    private NodeTraverserInterface $traverser;
+    /**
+     * @var array<NodeTraverserInterface>
+     */
+    private array $traversers = [];
+    private NodeTraverserInterface $traverser2;
+    private NodeTraverserInterface $traverser3;
     public function __construct()
     {
         parent::__construct('estimate-cost:check');
         $this->parser = new Parser\Php7(new Lexer());
-        $this->traverser = new NodeTraverser();
     }
     protected function configure(): void
     {
@@ -67,7 +75,11 @@ class Check extends Command
             }
             if (str_ends_with($file, '.php')) {
                 $output->write('.');
-                $this->traverser->traverse($this->parser->parse(file_get_contents($path)));
+                $nodes = $this->parser->parse(file_get_contents($path));
+                foreach ($this->traversers as $traverser) {
+                    $output->write('#', false, OutputInterface::VERBOSITY_VERBOSE);
+                    $nodes = $traverser->traverse($nodes);
+                }
             }
         }
     }
@@ -75,11 +87,21 @@ class Check extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $config = new Merged(new File(getcwd()), new Cli($input));
-        $callables = new CallableList();
-        $this->traverser->addVisitor(new NameResolver());
-        $this->traverser->addVisitor(new CallStackBuilder($callables));
-        $this->traverser->addVisitor(new ConfigurationReader($callables));
-        $this->traverser->addVisitor(new RuleChecker($callables, new RuleList(...$config->ruleWhitelist())));
+        $callables = new CallableList($config);
+        $functions = new FunctionDefinitionList();
+        foreach ([
+             new NameResolver(),
+             new TypeResolver(),
+             new DeLooper(),
+             new FunctionListBuilder($functions),
+             new FallbackToRootNamespaceChecker($functions),
+             new ConfigurationReader($callables),
+             new CallStackBuilder($callables),
+             new RuleChecker($callables, new RuleList(...$config->ruleWhitelist()))
+        ] as $visitor) {
+            $this->traversers[] = new NodeTraverser();
+            $this->traversers[count($this->traversers) -1]->addVisitor($visitor);
+        }
         $output->writeln('Parsing codebase');
         foreach ($config->foldersToScan() as $folder) {
             $this->iterateFolder(

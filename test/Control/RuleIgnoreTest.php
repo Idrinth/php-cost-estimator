@@ -7,7 +7,7 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(RuleIgnore::class)]
-class RuleIgnoreTest extends TestCase
+final class RuleIgnoreTest extends TestCase
 {
     #[Test]
     public function providesValuesUsedInConstruction(): void

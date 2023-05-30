@@ -23,7 +23,7 @@ final class UsesFallbackToRootNamespace implements \De\Idrinth\PhpCostEstimator\
 
     public function applies(Node $astNode): bool
     {
-        return false;
+        return $astNode->hasAttribute('idrinth-fallback');
     }
 
     public function set(): RuleSet

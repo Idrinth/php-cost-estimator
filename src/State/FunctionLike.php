@@ -20,6 +20,10 @@ final class FunctionLike
      */
     private array $children = [];
     private PHPEnvironment $environment;
+    /**
+     * @var string[]
+     */
+    private array $ignoredRules = [];
 
     public function __construct(
         private readonly string $name,
@@ -67,12 +71,21 @@ final class FunctionLike
         $this->isStart = true;
         $this->environment = $environment;
     }
-    public function registerCallee(FunctionLike $caller, int $count = 1): void
+    public function registerCallee(FunctionLike $callee, int $count = 1): void
     {
-        $this->children[] = new FunctionLikeCallCount($caller, $count);
+        foreach ($this->children as $pos => $child) {
+            if ($child->callee === $callee) {
+                $this->children[$pos] = new FunctionLikeCallCount($callee, $child->count + $count);
+                return;
+            }
+        }
+        $this->children[] = new FunctionLikeCallCount($callee, $count);
     }
     public function registerRule(Rule $rule): void
     {
+        if (in_array(get_class($rule), $this->ignoredRules)) {
+            return;
+        }
         $this->matchedRules[] = $rule;
     }
 
@@ -82,5 +95,10 @@ final class FunctionLike
     public function children(): iterable
     {
         yield from $this->children;
+    }
+
+    public function markIgnored(string $rule): void
+    {
+        $this->ignoredRules[] = $rule;
     }
 }

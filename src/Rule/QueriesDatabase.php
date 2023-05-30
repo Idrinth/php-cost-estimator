@@ -24,6 +24,14 @@ final class QueriesDatabase implements Rule
 
     public function applies(Node $astNode): bool
     {
+        if ($astNode instanceof Node\Expr\MethodCall) {
+            $var = $astNode->var;
+            if ($var instanceof Node\Expr\Variable) {
+                if ($var->hasAttribute('idrinth-type') && $var->getAttribute('idrinth-type') === 'PDO') {
+                    return in_array($astNode->name->toString(), ['query', 'exec', 'prepare'], true);
+                }
+            }
+        }
         return false;
     }
 

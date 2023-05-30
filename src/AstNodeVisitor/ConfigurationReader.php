@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace De\Idrinth\PhpCostEstimator\AstNodeVisitor;
 
 use De\Idrinth\PhpCostEstimator\Control\AssumedLoops;
-use De\Idrinth\PhpCostEstimator\Control\AssumedSize;
-use De\Idrinth\PhpCostEstimator\Control\CostModify;
 use De\Idrinth\PhpCostEstimator\Control\RuleIgnore;
 use De\Idrinth\PhpCostEstimator\Control\StartingPoint;
 use De\Idrinth\PhpCostEstimator\PHPEnvironment;
@@ -34,10 +32,16 @@ final class ConfigurationReader extends NodeVisitorAbstract
         if ($node instanceof Node\Stmt\ClassMethod) {
             $this->method = $node->name->toString();
         }
-        if ($node instanceof Node\Attribute && $node->name->toString() === 'StartingPoint') {
+        if ($node instanceof Node\Attribute && $node->name->toString() === StartingPoint::class) {
             $this->callableList->markStart(
                 $this->namespace . '\\' . $this->class . '::' . $this->method,
                 $node->args[0]->value->name->toString() === 'CLI' ? PHPEnvironment::CLI : PHPEnvironment::WEB,
+            );
+        }
+        if ($node instanceof Node\Attribute && $node->name->toString() === RuleIgnore::class) {
+            $this->callableList->markIgnored(
+                $this->namespace . '\\' . $this->class . '::' . $this->method,
+                $node->args[0]->value->name->toString(),
             );
         }
         return null;

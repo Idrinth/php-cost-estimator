@@ -5,7 +5,6 @@ return [
     'rules' => [
         ##RULES##
     ],
-    'version' => '%%PHP_VERSION%%',
     'folders' => [
         'src'
     ]

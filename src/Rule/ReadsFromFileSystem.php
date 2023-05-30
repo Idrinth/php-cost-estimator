@@ -27,19 +27,21 @@ final class ReadsFromFileSystem implements Rule
         if (!($astNode instanceof Node\Expr\FuncCall)) {
             return false;
         }
-        if (!($astNode->name instanceof Node\Name)) {
+        $name = $astNode->name;
+        if (!($name instanceof Node\Name)) {
             return false;
         }
-        if ($astNode->name->toLowerString() === 'file_get_contents') {
+        $name = $name->hasAttribute('namespacedName') && !$astNode->hasAttribute('idrinth-fallback') ? $name->getAttribute('namespacedName')->toString() : $name->toString();
+        if ($name === 'file_get_contents') {
             return true;
         }
-        if ($astNode->name->toLowerString() === 'scandir') {
+        if ($name === 'scandir') {
             return true;
         }
-        if ($astNode->name->toLowerString() === 'is_dir') {
+        if ($name === 'is_dir') {
             return true;
         }
-        if ($astNode->name->toLowerString() === 'is_file') {
+        if ($name === 'is_file') {
             return true;
         }
         return false;

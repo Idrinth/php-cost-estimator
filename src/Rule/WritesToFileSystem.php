@@ -23,6 +23,17 @@ final class WritesToFileSystem implements \De\Idrinth\PhpCostEstimator\Rule
 
     public function applies(Node $astNode): bool
     {
+        if (!($astNode instanceof Node\Expr\FuncCall)) {
+            return false;
+        }
+        $name = $astNode->name;
+        if (!($name instanceof Node\Name)) {
+            return false;
+        }
+        $name = $name->hasAttribute('namespacedName') && !$astNode->hasAttribute('idrinth-fallback') ? $name->getAttribute('namespacedName')->toString() : $name->toString();
+        if ($name === 'file_put_contents') {
+            return true;
+        }
         return false;
     }
 

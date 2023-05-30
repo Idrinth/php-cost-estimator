@@ -10,8 +10,6 @@ interface Configuration
      * @return iterable<Rule>
      */
     public function ruleWhitelist(): iterable;
-    public function phpVersion(): string;
-
     /**
      * @return iterable<string>
      */

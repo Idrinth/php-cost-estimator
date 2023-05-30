@@ -15,9 +15,8 @@ class FileTest extends TestCase
     {
         $sut = new File(__DIR__ . '/../..');
         self::assertCount(16, iterator_to_array($sut->ruleWhitelist()));
-        self::assertSame('8.2.6', $sut->phpVersion());
         self::assertSame(['src'], $sut->foldersToScan());
-        self::assertSame(0, $sut->minSeverity());
+        self::assertSame(1, $sut->minSeverity());
         self::assertFalse($sut->checkCleanedDependencies());
         self::assertFalse($sut->checkOptimizedAutoloader());
     }

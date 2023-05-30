@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace De\Idrinth\PhpCostEstimator\State;
 
+use De\Idrinth\PhpCostEstimator\Configuration;
 use De\Idrinth\PhpCostEstimator\PHPEnvironment;
 use De\Idrinth\PhpCostEstimator\Rule;
 use Generator;
@@ -15,6 +16,9 @@ final class CallableList implements IteratorAggregate
      * @var FunctionLike[]
      */
     private array $callables = [];
+    public function __construct(private readonly Configuration $configuration)
+    {
+    }
     private function children(
         FunctionLike $callable,
         PHPEnvironment $environment,
@@ -22,18 +26,19 @@ final class CallableList implements IteratorAggregate
         int $indent = 0,
     ): Generator {
         $cost = $callable->cost($environment, $callCount);
-        if ($cost === 0) {
+        if ($cost < $this->configuration->minSeverity()) {
             return;
         }
         $rules = [];
         foreach ($callable->matchedRules() as $rule) {
             if ($rule->relevant($environment)) {
-                $rules[] = basename(get_class($rule));
+                $parts = explode('\\', get_class($rule));
+                $rules[] = array_pop($parts);
             }
         }
         yield str_repeat('  ', $indent)
-            . "{$callable->name()}@{$environment->name} => {$cost}"
-            . implode(', ', $rules);
+            . "{$callCount}x{$callable->name()}@{$environment->name} => {$cost}"
+            . (count($rules) > 0 ? "\n- "  . implode("\n- ", array_unique($rules)) : '');
         foreach ($callable->children() as $child) {
             if ($child->count > 0) {
                 yield from $this->children(
@@ -49,7 +54,6 @@ final class CallableList implements IteratorAggregate
     {
         foreach ($this->callables as $callable) {
             if ($callable->isRoot()) {
-                var_dump($callable->name());
                 $environment = $callable->environment();
                 yield from $this->children($callable, $environment);
             }
@@ -87,5 +91,13 @@ final class CallableList implements IteratorAggregate
             $this->callables[$name] = new FunctionLike($name);
         }
         $this->callables[$name]->markStart($environment);
+    }
+
+    public function markIgnored(string $name, string $rule): void
+    {
+        if (!isset($this->callables[$name])) {
+            $this->callables[$name] = new FunctionLike($name);
+        }
+        $this->callables[$name]->markIgnored($rule);
     }
 }
