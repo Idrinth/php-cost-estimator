@@ -47,6 +47,11 @@ class TypeResolver extends NodeVisitorAbstract
                 $node->setAttribute('idrinth-type', $this->variables[$node->name . '']);
             }
         }
+        if ($node instanceof Node\Expr\PropertyFetch) {
+            if ($node->var instanceof Node\Identifier && $node->var->name === 'this' && isset($this->properties[$node->name . ''])) {
+                $node->setAttribute('idrinth-type', $this->properties[$node->name . '']);
+            }
+        }
         return $node;
     }
     public function leaveNode(Node $node): null

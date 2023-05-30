@@ -36,9 +36,10 @@ final class CallableList implements IteratorAggregate
                 $rules[] = array_pop($parts);
             }
         }
-        yield str_repeat('  ', $indent)
+        $indentation = str_repeat('  ', $indent);;
+        yield $indentation
             . "{$callCount}x{$callable->name()}@{$environment->name} => {$cost}"
-            . (count($rules) > 0 ? "\n- "  . implode("\n- ", array_unique($rules)) : '');
+            . (count($rules) > 0 ? "\n$indentation- "  . implode("\n$indentation- ", array_unique($rules)) : '');
         foreach ($callable->children() as $child) {
             if ($child->count > 0) {
                 yield from $this->children(

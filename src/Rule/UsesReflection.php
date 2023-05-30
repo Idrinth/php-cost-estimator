@@ -6,10 +6,11 @@ namespace De\Idrinth\PhpCostEstimator\Rule;
 
 use De\Idrinth\PhpCostEstimator\Cost;
 use De\Idrinth\PhpCostEstimator\PHPEnvironment;
+use De\Idrinth\PhpCostEstimator\Rule;
 use De\Idrinth\PhpCostEstimator\RuleSet;
 use PhpParser\Node;
 
-final class UsesReflection implements \De\Idrinth\PhpCostEstimator\Rule
+final class UsesReflection implements Rule
 {
     public function reasoning(): string
     {
@@ -23,6 +24,14 @@ final class UsesReflection implements \De\Idrinth\PhpCostEstimator\Rule
 
     public function applies(Node $astNode): bool
     {
+        if ($astNode instanceof Node\Expr\New_) {
+            return in_array($astNode->class->toString(), [
+                'ReflectionClass',
+                'ReflectionMethod',
+                'ReflectionFunction',
+                'ReflectionAttribute',
+            ]);
+        }
         return false;
     }
 

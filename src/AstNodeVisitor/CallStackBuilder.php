@@ -34,6 +34,9 @@ final class CallStackBuilder extends NodeVisitorAbstract
         if ($node instanceof Node\Expr\StaticCall) {
             $this->callableList->registerCallee($this->context, $node->class->toString() . '::' . $node->name->toString(), 1);
         }
+        if ($node instanceof Node\Expr\New_) {
+            $this->callableList->registerCallee($this->context, $node->class->toString() . '::__construct', 1);
+        }
         return null;
     }
     public function beforeTraverse(array $nodes): null
