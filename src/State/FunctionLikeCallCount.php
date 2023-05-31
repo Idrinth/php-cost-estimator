@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace De\Idrinth\PhpCostEstimator\State;
 
-class FunctionLikeCallCount
+final readonly class FunctionLikeCallCount
 {
     public function __construct(
-        public readonly FunctionLike $callee,
+        public FunctionLike $callee,
         public int $count,
     ) {
     }
