@@ -32,12 +32,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 class Check extends Command
 {
     private Parser $parser;
-    /**
-     * @var array<NodeTraverserInterface>
-     */
-    private array $traversers = [];
-    private NodeTraverserInterface $traverser2;
-    private NodeTraverserInterface $traverser3;
     public function __construct()
     {
         parent::__construct('estimate-cost:check');
@@ -65,18 +59,18 @@ class Check extends Command
             'Enable additional rules'
         );
     }
-    private function iterateFolder(string $folder, CallableList &$callables, OutputInterface $output): void
+    private function iterateFolder(string $folder, CallableList &$callables, OutputInterface $output, array $traversers): void
     {
         foreach (array_diff(scandir($folder), ['.', '..']) as $file) {
             $path = $folder . DIRECTORY_SEPARATOR . $file;
             if (is_dir($path)) {
-                $this->iterateFolder($path, $callables, $output);
+                $this->iterateFolder($path, $callables, $output, $traversers);
                 continue;
             }
             if (str_ends_with($file, '.php')) {
                 $output->write('.');
                 $nodes = $this->parser->parse(file_get_contents($path));
-                foreach ($this->traversers as $traverser) {
+                foreach ($traversers as $traverser) {
                     $output->write('#', false, OutputInterface::VERBOSITY_VERBOSE);
                     $nodes = $traverser->traverse($nodes);
                 }
@@ -89,6 +83,7 @@ class Check extends Command
         $config = new Merged(new File(getcwd()), new Cli($input));
         $callables = new CallableList($config);
         $functions = new FunctionDefinitionList();
+        $traversers = [];
         foreach ([
              new NameResolver(),
              new TypeResolver(),
@@ -99,8 +94,8 @@ class Check extends Command
              new CallStackBuilder($callables),
              new RuleChecker($callables, new RuleList(...$config->ruleWhitelist()))
         ] as $visitor) {
-            $this->traversers[] = new NodeTraverser();
-            $this->traversers[count($this->traversers) -1]->addVisitor($visitor);
+            $traversers[] = new NodeTraverser();
+            $traversers[count($traversers) -1]->addVisitor($visitor);
         }
         $output->writeln('Parsing codebase');
         foreach ($config->foldersToScan() as $folder) {
@@ -108,8 +103,30 @@ class Check extends Command
                 getcwd() . DIRECTORY_SEPARATOR . $folder,
                 $callables,
                 $output,
+                $traversers,
             );
         }
+        $output->writeln('');
+        $output->writeln('Parsing dependencies');
+        $traversers = [];
+        foreach ([
+                     new NameResolver(),
+                     new TypeResolver(),
+                     new DeLooper(),
+                     new FunctionListBuilder($functions),
+                     new FallbackToRootNamespaceChecker($functions),
+                     new CallStackBuilder($callables),
+                     new RuleChecker($callables, new RuleList(...$config->ruleWhitelist()))
+                 ] as $visitor) {
+            $traversers[] = new NodeTraverser();
+            $traversers[count($traversers) -1]->addVisitor($visitor);
+        }
+        $this->iterateFolder(
+            getcwd() . DIRECTORY_SEPARATOR . 'vendor',
+            $callables,
+            $output,
+            $traversers,
+        );
         $output->writeln('');
         $output->writeln('Writing results');
         foreach ($callables as $callable) {

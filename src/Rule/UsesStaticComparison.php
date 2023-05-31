@@ -52,34 +52,6 @@ class UsesStaticComparison implements Rule
         if ($astNode->left instanceof Node\Expr\ConstFetch && $astNode->right instanceof Node\Expr\ConstFetch) {
             return true;
         }
-        if (
-            $astNode->left instanceof Node\Expr\FuncCall &&
-            $astNode->left->name->toString() === 'phpversion' &&
-            $astNode->right instanceof Node\Scalar
-        ) {
-            return true;
-        }
-        if (
-            $astNode->left instanceof Node\Expr\FuncCall &&
-            $astNode->left->name->toString() === 'phpversion' &&
-            $astNode->right instanceof Node\Expr\ConstFetch
-        ) {
-            return true;
-        }
-        if (
-            $astNode->right instanceof Node\Expr\FuncCall &&
-            $astNode->right->name->toString() === 'phpversion' &&
-            $astNode->left instanceof Node\Scalar
-        ) {
-            return true;
-        }
-        if (
-            $astNode->right instanceof Node\Expr\FuncCall &&
-            $astNode->right->name->toString() === 'phpversion' &&
-            $astNode->left instanceof Node\Expr\ConstFetch
-        ) {
-            return true;
-        }
         return false;
     }
 

@@ -11,7 +11,6 @@ use PHPUnit\Framework\TestCase;
 class FunctionLikeCallCountTest extends TestCase
 {
     #[Test]
-    #[DependsOnClass(FunctionLike::class)]
     public function canBeConstructed(): void
     {
         $sut = new FunctionLikeCallCount(

@@ -25,16 +25,16 @@ final class CallStackBuilder extends NodeVisitorAbstract
         if ($node instanceof Node\Stmt\ClassMethod) {
             $this->context = $this->class . '::' . $node->name->toString();
         }
-        if ($node instanceof Node\Expr\FuncCall) {
+        if ($node instanceof Node\Expr\FuncCall && $node->name instanceof Node\Name) {
             $this->callableList->registerCallee($this->context, $node->name->toString(), 1);
         }
-        if ($node instanceof Node\Expr\MethodCall && $node->var->hasAttribute('idrinth-type')) {
+        if ($node instanceof Node\Expr\MethodCall && $node->var->hasAttribute('idrinth-type') && $node->name instanceof Node\Identifier) {
             $this->callableList->registerCallee($this->context, $node->var->getAttribute('idrinth-type') . '::' . $node->name->toString(), 1);
         }
-        if ($node instanceof Node\Expr\StaticCall) {
+        if ($node instanceof Node\Expr\StaticCall && $node->class instanceof Node\Name && $node->name instanceof Node\Identifier) {
             $this->callableList->registerCallee($this->context, $node->class->toString() . '::' . $node->name->toString(), 1);
         }
-        if ($node instanceof Node\Expr\New_) {
+        if ($node instanceof Node\Expr\New_ && $node->class instanceof Node\Name) {
             $this->callableList->registerCallee($this->context, $node->class->toString() . '::__construct', 1);
         }
         return null;

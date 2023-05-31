@@ -24,6 +24,12 @@ class UsesVersionSwitches implements Rule
 
     public function applies(Node $astNode): bool
     {
+        if ($astNode instanceof Node\Expr\FuncCall && $astNode->name instanceof Node\Name) {
+            return $astNode->name->toLowerString() === 'phpversion';
+        }
+        if ($astNode instanceof Node\Expr\ConstFetch && $astNode->name instanceof Node\Name) {
+            return $astNode->name->toString() === 'PHP_VERSION';
+        }
         return false;
     }
 

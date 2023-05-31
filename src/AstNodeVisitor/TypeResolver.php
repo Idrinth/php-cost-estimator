@@ -13,13 +13,15 @@ class TypeResolver extends NodeVisitorAbstract
     private array $variables = [];
     public function enterNode(Node $node): Node
     {
-        if ($node instanceof Node\Stmt\ClassLike) {
+        if ($node instanceof Node\Stmt\ClassLike && $node->namespacedName instanceof Node\Identifier) {
             $this->class = $node->namespacedName->toString();
             $this->variables['this'] = $this->class;
         }
         if ($node instanceof Node\Stmt\Property) {
             foreach ($node->props as $property) {
-                $this->properties[$property->name->toString()] = $node->type->toString();
+                if (property_exists($property, 'type') && $property->type instanceof Node\Identifier) {
+                    $this->properties[$property->name->toString()] = $node->type->toString();
+                }
             }
         }
         if ($node instanceof Node\Expr\Assign) {
@@ -40,7 +42,9 @@ class TypeResolver extends NodeVisitorAbstract
             }
         }
         if ($node instanceof Node\Param) {
-            $this->variables[$node->var->name] = $node->type->toString();
+            if ($node->type instanceof Node\Identifier) {
+                $this->variables[$node->var->name] = $node->type->toString();
+            }
         }
         if ($node instanceof Node\Expr\Variable) {
             if (isset($this->variables[$node->name . ''])) {

@@ -27,6 +27,9 @@ class UsesRemoteCall implements Rule
         if (!($astNode instanceof Node\Expr\FuncCall)) {
             return false;
         }
+        if (!($astNode->name instanceof Node\Name)) {
+            return false;
+        }
         if ($astNode->name->toString() === 'curl_exec') {
             return true;
         }

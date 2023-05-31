@@ -40,7 +40,6 @@ final class FunctionLikeTest extends TestCase
         self::assertSame(4, $functionLike->cost(PHPEnvironment::WEB));
     }
     #[Test]
-    #[DependsOnClass(FunctionLikeCallCount::class)]
     public function readingFromFileSystemInAChildHasACostOfFourTimesUsage(): void
     {
         $rule = $this->createMock(Rule::class);

@@ -27,6 +27,9 @@ final class UsesArrayKeyExists implements Rule
         if (!($astNode instanceof Node\Expr\FuncCall)) {
             return false;
         }
+        if (!($astNode->name instanceof Node\Name)) {
+            return false;
+        }
         if ($astNode->name->toString() === 'array_key_exists') {
             return true;
         }

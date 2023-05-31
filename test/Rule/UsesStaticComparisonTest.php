@@ -15,12 +15,6 @@ final class UsesStaticComparisonTest extends TestCase
     public static function provideMatchingAsts(): array
     {
         return [
-            'phpversion()' => [
-                new Node\Expr\BinaryOp\Equal(
-                    new FuncCall(new Node\Name('phpversion')),
-                    new Node\Scalar\String_('7.4.0'),
-                ),
-            ],
             'PHP_VERSION' => [
                 new Node\Expr\BinaryOp\Equal(
                     new Node\Expr\ConstFetch(new Node\Name('PHP_VERSION')),

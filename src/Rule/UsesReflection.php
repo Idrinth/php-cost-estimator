@@ -24,7 +24,7 @@ final class UsesReflection implements Rule
 
     public function applies(Node $astNode): bool
     {
-        if ($astNode instanceof Node\Expr\New_) {
+        if ($astNode instanceof Node\Expr\New_ && $astNode->class instanceof Node\Name) {
             return in_array($astNode->class->toString(), [
                 'ReflectionClass',
                 'ReflectionMethod',
