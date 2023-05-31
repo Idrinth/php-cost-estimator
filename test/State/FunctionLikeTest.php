@@ -6,8 +6,11 @@ use De\Idrinth\PhpCostEstimator\Cost;
 use De\Idrinth\PhpCostEstimator\PHPEnvironment;
 use De\Idrinth\PhpCostEstimator\Rule;
 use De\Idrinth\PhpCostEstimator\Rule\ReadsFromFileSystem;
+use PHPUnit\Framework\Attributes\CodeCoverageIgnore;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\DependsOnClass;
+use PHPUnit\Framework\Attributes\RequiresMethod;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
@@ -37,6 +40,7 @@ final class FunctionLikeTest extends TestCase
         self::assertSame(4, $functionLike->cost(PHPEnvironment::WEB));
     }
     #[Test]
+    #[DependsOnClass(FunctionLikeCallCount::class)]
     public function readingFromFileSystemInAChildHasACostOfFourTimesUsage(): void
     {
         $rule = $this->createMock(Rule::class);
