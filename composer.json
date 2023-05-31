@@ -40,7 +40,7 @@
     "bin/estimate-cost"
   ],
   "scripts": {
-    "test": "php ./vendor/bin/phpunit --testdox --coverage-text --coverage-html ./coverage/",
+    "test": "php ./vendor/bin/phpunit --coverage-text --coverage-html ./coverage/",
     "psr12lint": "./tools/phpcs --standard=PSR12 src/ test/ bin/",
     "psr12fix": "./tools/phpcbf --standard=PSR12 src/ test/ bin/",
     "phplint": "./tools/parallel-lint --exclude vendor/ .",
