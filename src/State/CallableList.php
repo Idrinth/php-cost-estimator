@@ -16,8 +16,10 @@ final class CallableList implements IteratorAggregate
      * @var FunctionLike[]
      */
     private array $callables = [];
-    public function __construct(private readonly Configuration $configuration)
-    {
+    public function __construct(
+        private readonly Configuration $configuration,
+        private readonly InheritanceList $inheritanceList,
+    ){
     }
     private function children(
         FunctionLike $callable,
@@ -40,6 +42,17 @@ final class CallableList implements IteratorAggregate
         yield $indentation
             . "{$callCount}x{$callable->name()}@{$environment->name} => {$cost}"
             . (count($rules) > 0 ? "\n$indentation- "  . implode("\n$indentation- ", array_unique($rules)) : '');
+        if (!$callable->isFound() && str_contains($callable->name(), '\\')) {
+            foreach ($callable->implementations() as $implementation) {
+                yield from $this->children(
+                    $implementation,
+                    $environment,
+                    $callCount,
+                    $indent + 1
+                );
+            }
+            return;
+        }
         foreach ($callable->children() as $child) {
             if ($child->count > 0) {
                 yield from $this->children(
@@ -65,7 +78,7 @@ final class CallableList implements IteratorAggregate
         Rule ...$matchedRules
     ): void {
         if (!isset($this->callables[$name])) {
-            $this->callables[$name] = new FunctionLike($name);
+            $this->callables[$name] = new FunctionLike($name, $this->inheritanceList, $this);
         }
         foreach ($matchedRules as $rule) {
             $this->callables[$name]->registerRule($rule);
@@ -78,10 +91,10 @@ final class CallableList implements IteratorAggregate
             return;
         }
         if (!isset($this->callables[$context])) {
-            $this->callables[$context] = new FunctionLike($context);
+            $this->callables[$context] = new FunctionLike($context, $this->inheritanceList, $this);
         }
         if (!isset($this->callables[$called])) {
-            $this->callables[$called] = new FunctionLike($called);
+            $this->callables[$called] = new FunctionLike($called, $this->inheritanceList, $this);
         }
         $this->callables[$context]->registerCallee($this->callables[$called], $count);
     }
@@ -89,7 +102,7 @@ final class CallableList implements IteratorAggregate
     public function markStart(string $name, PHPEnvironment $environment): void
     {
         if (!isset($this->callables[$name])) {
-            $this->callables[$name] = new FunctionLike($name);
+            $this->callables[$name] = new FunctionLike($name, $this->inheritanceList, $this);
         }
         $this->callables[$name]->markStart($environment);
     }
@@ -97,8 +110,26 @@ final class CallableList implements IteratorAggregate
     public function markIgnored(string $name, string $rule): void
     {
         if (!isset($this->callables[$name])) {
-            $this->callables[$name] = new FunctionLike($name);
+            $this->callables[$name] = new FunctionLike($name, $this->inheritanceList, $this);
         }
         $this->callables[$name]->markIgnored($rule);
+    }
+
+    public function has(string $name): bool
+    {
+        return isset($this->callables[$name]);
+    }
+
+    public function get(string $name): FunctionLike
+    {
+        return $this->callables[$name];
+    }
+
+    public function markFound(string $string): void
+    {
+        if (!isset($this->callables[$string])) {
+            $this->callables[$string] = new FunctionLike($string, $this->inheritanceList, $this);
+        }
+        $this->callables[$string]->markFound();
     }
 }

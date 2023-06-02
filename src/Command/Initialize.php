@@ -20,7 +20,7 @@ class Initialize extends Command
     {
         $this->setDescription('Initializes the tool\'s configuration file with sensible defaults');
     }
-    #[StartingPoint(PHPEnvironment::CLI, 1)]
+    #[StartingPoint(PHPEnvironment::CLI)]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $file = getcwd() . '/.php-cost-estimator/config.php';

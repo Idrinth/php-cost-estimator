@@ -24,18 +24,44 @@ final class FunctionLike
      * @var string[]
      */
     private array $ignoredRules = [];
+    /**
+     * @var true
+     */
+    private bool $found = false;
+    private int $cost = -1;
 
     public function __construct(
         private readonly string $name,
+        private readonly InheritanceList $inheritanceList,
+        private readonly CallableList $callableList,
     ) {
     }
     public function name(): string
     {
         return $this->name;
     }
+    private function mayCheckCost(string $child, string $func): bool
+    {
+        return $this->callableList->has($child . '::' . $func) && $child . '::' . $func !== $this->name;
+    }
     public function cost(PHPEnvironment $environment, int $callFactor = 1): int
     {
+        if ($this->cost > -1) {
+            return $this->cost * $callFactor;
+        }
         $cost = 0;
+        if (!$this->found && str_contains($this->name, '::') && str_contains($this->name, '\\')) {
+            foreach ($this->inheritanceList->getInheritors(explode('::', $this->name)[0]) as $child) {
+                if ($this->mayCheckCost($child, explode('::', $this->name)[1])) {
+                    $callee = $this->callableList->get($child . '::' . explode('::', $this->name)[1]);
+                    $cost += $callee->cost($environment, $callFactor);
+                }
+            }
+            return $cost;
+        }
+        if (!$this->found) {
+            return $cost;
+        }
         foreach ($this->matchedRules as $rule) {
             if ($rule->relevant($environment)) {
                 match ($rule->cost()) {
@@ -50,8 +76,18 @@ final class FunctionLike
             }
         }
         foreach ($this->children as $child) {
+            if (str_starts_with($child->callee->name(), 'parent::') || str_starts_with($child->callee->name(), 'self::') || str_starts_with($child->callee->name(), 'static::')) {
+                foreach ($this->inheritanceList->getInheritors(explode('::', $this->name)[0]) as $alternative) {
+                    if ($this->mayCheckCost($alternative, explode('::', $child->callee->name())[1])) {
+                        $callee = $this->callableList->get($alternative . '::' . explode('::', $child->callee->name())[1]);
+                        $cost += $callee->cost($environment, $callFactor);
+                    }
+                }
+                continue;
+            }
             $cost += $child->callee->cost($environment, $child->count * $callFactor);
         }
+        $this->cost = $cost/$callFactor;
         return $cost;
     }
     public function matchedRules(): array
@@ -100,5 +136,24 @@ final class FunctionLike
     public function markIgnored(string $rule): void
     {
         $this->ignoredRules[] = $rule;
+    }
+
+    public function markFound(): void
+    {
+        $this->found = true;
+    }
+
+    public function isFound(): bool
+    {
+        return $this->found;
+    }
+
+    public function implementations(): iterable
+    {
+        foreach ($this->inheritanceList->getInheritors(explode('::', $this->name)[0]) as $child) {
+            if ($this->callableList->has($child . '::' . explode('::', $this->name)[1])) {
+                yield $this->callableList->get($child . '::' . explode('::', $this->name)[1]);
+            }
+        }
     }
 }

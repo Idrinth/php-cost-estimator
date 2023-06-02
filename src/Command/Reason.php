@@ -26,7 +26,7 @@ class Reason extends Command
         $this->addArgument('rule', InputArgument::OPTIONAL, 'The rule to show reasoning for');
     }
 
-    #[StartingPoint(PHPEnvironment::CLI, 1)]
+    #[StartingPoint(PHPEnvironment::CLI)]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         if ($input->hasArgument('rule')) {

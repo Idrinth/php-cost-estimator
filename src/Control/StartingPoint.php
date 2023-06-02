@@ -12,7 +12,7 @@ final readonly class StartingPoint
 {
     public function __construct(
         public PHPEnvironment $phpEnvironment,
-        public int $callFactor,
+        public int $callFactor = 1,
     ) {
     }
 }
