@@ -33,9 +33,32 @@ final class ConfigurationReader extends NodeVisitorAbstract
             $this->method = $node->name->toString();
         }
         if ($node instanceof Node\Attribute && $node->name->toString() === StartingPoint::class) {
+            $recursionDepth = 5;
+            $callFactor = 1;
+            $phpEnvironment = PHPEnvironment::BOTH;
+            foreach ($node->args as $pos => $arg) {
+                if (($arg->name && $arg->name->toString() === 'recursionDepth') || ($pos === 2 && $arg->name === null)) {
+                    $recursionDepth = $arg->value->value;
+                }
+                if (($arg->name && $arg->name->toString() === 'callFactor') || ($pos === 1 && $arg->name === null)) {
+                    $callFactor = $arg->value->value;
+                }
+                if (($arg->name && $arg->name->toString() === 'phpEnvironment') || ($pos === 0 && $arg->name === null)) {
+                    $expr = $arg->value;
+                    if ($expr instanceof Node\Expr\ClassConstFetch) {
+                        $phpEnvironment = match ($expr->name->toString()) {
+                            'CLI' => PHPEnvironment::CLI,
+                            'WEB' => PHPEnvironment::WEB,
+                            'BOTH' => PHPEnvironment::BOTH,
+                        };
+                    }
+                }
+            }
             $this->callableList->markStart(
                 $this->namespace . '\\' . $this->class . '::' . $this->method,
-                $node->args[0]->value->name->toString() === 'CLI' ? PHPEnvironment::CLI : PHPEnvironment::WEB,
+                $phpEnvironment,
+                $callFactor,
+                $recursionDepth,
             );
         }
         if ($node instanceof Node\Attribute && $node->name->toString() === RuleIgnore::class) {

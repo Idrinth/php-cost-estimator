@@ -29,6 +29,8 @@ final class FunctionLike
      */
     private bool $found = false;
     private int|float $cost = -1;
+    private int $callfactor = 1;
+    private int $recursionDepth = 5;
 
     public function __construct(
         private readonly string $name,
@@ -44,13 +46,13 @@ final class FunctionLike
     {
         return $this->callableList->has($child . '::' . $func) && $child . '::' . $func !== $this->name;
     }
-    public function cost(PHPEnvironment $environment, int|float $callFactor = 1, array $recursionLimiter = []): int|float
+    public function cost(PHPEnvironment $environment, int|float $callFactor = 1, int $recursionDepth = 5, array $recursionLimiter = []): int|float
     {
         if ($this->cost > -1) {
             return $this->cost * $callFactor;
         }
         $cost = 0;
-        if ($recursionLimiter[$this->name] ?? 0 > 5) {
+        if (($recursionLimiter[$this->name] ?? 0) > $recursionDepth) {
             return $cost;
         }
         $recursionLimiter[$this->name] = ($recursionLimiter[$this->name] ?? 0) + 1;
@@ -84,12 +86,12 @@ final class FunctionLike
                 foreach ($this->inheritanceList->getInheritors(explode('::', $this->name)[0]) as $alternative) {
                     if ($this->mayCheckCost($alternative, explode('::', $child->callee->name())[1])) {
                         $callee = $this->callableList->get($alternative . '::' . explode('::', $child->callee->name())[1]);
-                        $cost += $callee->cost($environment, $callFactor, $recursionLimiter);
+                        $cost += $callee->cost($environment, $callFactor, $recursionDepth, $recursionLimiter);
                     }
                 }
                 continue;
             }
-            $cost += $child->callee->cost($environment, $child->count * $callFactor, $recursionLimiter);
+            $cost += $child->callee->cost($environment, $child->count * $callFactor, $recursionDepth, $recursionLimiter);
         }
         $this->cost = $cost/$callFactor;
         return $cost;
@@ -106,10 +108,12 @@ final class FunctionLike
     {
         return $this->environment;
     }
-    public function markStart(PHPEnvironment $environment): void
+    public function markStart(PHPEnvironment $environment, int $callFactor, int $recursionDepth): void
     {
         $this->isStart = true;
         $this->environment = $environment;
+        $this->callfactor = $callFactor;
+        $this->recursionDepth = $recursionDepth;
     }
     public function registerCallee(FunctionLike $callee, int $count = 1): void
     {
@@ -159,5 +163,13 @@ final class FunctionLike
                 yield $this->callableList->get($child . '::' . explode('::', $this->name)[1]);
             }
         }
+    }
+    public function callFactor(): int
+    {
+        return $this->callfactor;
+    }
+    public function recursionDepth(): int
+    {
+        return $this->recursionDepth;
     }
 }

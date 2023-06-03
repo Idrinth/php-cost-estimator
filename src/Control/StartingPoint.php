@@ -11,8 +11,9 @@ use De\Idrinth\PhpCostEstimator\PHPEnvironment;
 final readonly class StartingPoint
 {
     public function __construct(
-        public PHPEnvironment $phpEnvironment,
+        public PHPEnvironment $phpEnvironment = PHPEnvironment::BOTH,
         public int $callFactor = 1,
+        public int $recursionDepth = 5,
     ) {
     }
 }

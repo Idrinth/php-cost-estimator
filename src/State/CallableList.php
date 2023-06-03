@@ -25,10 +25,11 @@ final class CallableList implements IteratorAggregate
         FunctionLike $callable,
         PHPEnvironment $environment,
         int|float $callCount = 1,
+        int $recursionDepth = 5,
         int $indent = 0,
         array $previous = []
     ): Generator {
-        $cost = $callable->cost($environment, $callCount);
+        $cost = $callable->cost($environment, $callCount, $recursionDepth);
         if ($cost < $this->configuration->minSeverity()) {
             return;
         }
@@ -50,6 +51,7 @@ final class CallableList implements IteratorAggregate
                     $implementation,
                     $environment,
                     $callCount,
+                    $recursionDepth,
                     $indent + 1,
                     $previous,
                 );
@@ -57,15 +59,15 @@ final class CallableList implements IteratorAggregate
             return;
         }
         foreach ($callable->children() as $child) {
-            yield from $this->processChild($child, $environment, $callCount, $indent, $previous);
+            yield from $this->processChild($child, $environment, $callCount, $recursionDepth, $indent, $previous);
         }
     }
-    private function processChild(FunctionLikeCallCount $child, PHPEnvironment $environment, int $callCount, int $indent, array $previous): Generator
+    private function processChild(FunctionLikeCallCount $child, PHPEnvironment $environment, int $callCount, int $recursionDepth, int $indent, array $previous): Generator
     {
         if ($child->count < 1) {
             return;
         }
-        if (($previous[$child->callee->name()] ?? 0) > 5) {
+        if (($previous[$child->callee->name()] ?? 0) > $recursionDepth) {
             yield str_repeat('  ', $indent+1) . "{$callCount}x{$child->callee->name()}@{$environment->name} => {-recursion-}";
             return;
         }
@@ -73,6 +75,7 @@ final class CallableList implements IteratorAggregate
             $child->callee,
             $environment,
             $child->count * $callCount,
+            $recursionDepth,
             $indent + 1,
             $previous,
         );
@@ -82,7 +85,7 @@ final class CallableList implements IteratorAggregate
         foreach ($this->callables as $callable) {
             if ($callable->isRoot()) {
                 $environment = $callable->environment();
-                yield from $this->children($callable, $environment);
+                yield from $this->children($callable, $environment, $callable->callFactor(), $callable->recursionDepth());
             }
         }
     }
@@ -112,12 +115,12 @@ final class CallableList implements IteratorAggregate
         $this->callables[$context]->registerCallee($this->callables[$called], $count);
     }
 
-    public function markStart(string $name, PHPEnvironment $environment): void
+    public function markStart(string $name, PHPEnvironment $environment, int $callFactor, int $recursionDepth): void
     {
         if (!isset($this->callables[$name])) {
             $this->callables[$name] = new FunctionLike($name, $this->inheritanceList, $this);
         }
-        $this->callables[$name]->markStart($environment);
+        $this->callables[$name]->markStart($environment, $callFactor, $recursionDepth);
     }
 
     public function markIgnored(string $name, string $rule): void
