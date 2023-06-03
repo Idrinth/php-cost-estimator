@@ -117,6 +117,7 @@ final class FunctionLike
     }
     public function registerCallee(FunctionLike $callee, int $count = 1): void
     {
+        $this->markFound();
         foreach ($this->children as $pos => $child) {
             if ($child->callee === $callee) {
                 $this->children[$pos] = new FunctionLikeCallCount($callee, $child->count + $count);
@@ -127,6 +128,7 @@ final class FunctionLike
     }
     public function registerRule(Rule $rule): void
     {
+        $this->markFound();
         if (in_array(get_class($rule), $this->ignoredRules)) {
             return;
         }

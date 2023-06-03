@@ -2,6 +2,7 @@
 
 namespace De\Idrinth\PhpCostEstimator\State;
 
+use De\Idrinth\PhpCostEstimator\Configuration;
 use De\Idrinth\PhpCostEstimator\Cost;
 use De\Idrinth\PhpCostEstimator\PHPEnvironment;
 use De\Idrinth\PhpCostEstimator\Rule;
@@ -19,7 +20,7 @@ final class FunctionLikeTest extends TestCase
 {
     #[Test]
     public function emptyFunctionHasNoCost(): void {
-        $functionLike = new FunctionLike('test');
+        $functionLike = new FunctionLike('test', new InheritanceList(), new CallableList($this->createStub(Configuration::class), new InheritanceList()));
         self::assertSame(0, $functionLike->cost(PHPEnvironment::WEB));
     }
     #[Test]
@@ -35,7 +36,7 @@ final class FunctionLikeTest extends TestCase
             ->method('relevant')
             ->with(PHPEnvironment::WEB)
             ->willReturn(true);
-        $functionLike = new FunctionLike('test');
+        $functionLike = new FunctionLike('test', new InheritanceList(), new CallableList($this->createStub(Configuration::class), new InheritanceList()));
         $functionLike->registerRule($rule);
         self::assertSame(4, $functionLike->cost(PHPEnvironment::WEB));
     }
@@ -52,9 +53,9 @@ final class FunctionLikeTest extends TestCase
             ->method('relevant')
             ->with(PHPEnvironment::WEB)
             ->willReturn(true);
-        $innerFunctionLike = new FunctionLike('test');
+        $innerFunctionLike = new FunctionLike('test', new InheritanceList(), new CallableList($this->createStub(Configuration::class), new InheritanceList()));
         $innerFunctionLike->registerRule($rule);
-        $functionLike = new FunctionLike('test2');
+        $functionLike = new FunctionLike('test2', new InheritanceList(), new CallableList($this->createStub(Configuration::class), new InheritanceList()));
         $functionLike->registerCallee($innerFunctionLike, 3);
         self::assertSame(24, $functionLike->cost(PHPEnvironment::WEB));
     }

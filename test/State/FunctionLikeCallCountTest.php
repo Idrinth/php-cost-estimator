@@ -2,6 +2,7 @@
 
 namespace De\Idrinth\PhpCostEstimator\State;
 
+use De\Idrinth\PhpCostEstimator\Configuration;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DependsOnClass;
 use PHPUnit\Framework\Attributes\Test;
@@ -16,6 +17,8 @@ class FunctionLikeCallCountTest extends TestCase
         $sut = new FunctionLikeCallCount(
             $func = new FunctionLike(
                 'test',
+                new InheritanceList(),
+                new CallableList($this->createStub(Configuration::class), new InheritanceList())
             ),
             111,
         );
