@@ -10,6 +10,7 @@ use De\Idrinth\PhpCostEstimator\AstNodeVisitor\DeLooper;
 use De\Idrinth\PhpCostEstimator\AstNodeVisitor\FallbackToRootNamespaceChecker;
 use De\Idrinth\PhpCostEstimator\AstNodeVisitor\FunctionListBuilder;
 use De\Idrinth\PhpCostEstimator\AstNodeVisitor\InheritanceLister;
+use De\Idrinth\PhpCostEstimator\AstNodeVisitor\TypeCollector;
 use De\Idrinth\PhpCostEstimator\AstNodeVisitor\TypeResolver;
 use De\Idrinth\PhpCostEstimator\AstNodeVisitor\RuleChecker;
 use De\Idrinth\PhpCostEstimator\Configuration;
@@ -22,9 +23,9 @@ use De\Idrinth\PhpCostEstimator\State\CallableList;
 use De\Idrinth\PhpCostEstimator\State\FunctionDefinitionList;
 use De\Idrinth\PhpCostEstimator\State\InheritanceList;
 use De\Idrinth\PhpCostEstimator\State\RuleList;
+use De\Idrinth\PhpCostEstimator\State\TypeList;
 use PhpParser\Lexer;
 use PhpParser\NodeTraverser;
-use PhpParser\NodeTraverserInterface;
 use PhpParser\NodeVisitor\NameResolver;
 use PhpParser\Parser;
 use Symfony\Component\Console\Command\Command;
@@ -35,6 +36,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 class Check extends Command
 {
     private Parser $parser;
+    private array $projectNodes = [];
+    private array $dependencyNodes = [];
     public function __construct()
     {
         parent::__construct('estimate-cost:check');
@@ -68,9 +71,15 @@ class Check extends Command
             'Disable progress output'
         );
     }
-    private function iterateFolder(string $folder, CallableList &$callables, OutputInterface $output, array $traversers, bool $noProgress, array $dirBlacklist= ['bin', 'public', 'example', 'examples', 'test', 'tests']): void
-    {
-        foreach ($dirBlacklist as $blacklisted) {
+    private function iterateFolder(
+        string $folder,
+        CallableList $callables,
+        OutputInterface $output,
+        array $traversers,
+        bool $noProgress,
+        array &$nodeList,
+    ): void {
+        foreach (['bin', 'public', 'example', 'examples', 'test', 'tests', 'doc', 'docs',] as $blacklisted) {
             if (str_ends_with(strtolower($folder), DIRECTORY_SEPARATOR . $blacklisted)) {
                 return;
             }
@@ -78,7 +87,7 @@ class Check extends Command
         foreach (array_diff(scandir($folder), ['.', '..']) as $file) {
             $path = $folder . DIRECTORY_SEPARATOR . $file;
             if (is_dir($path)) {
-                $this->iterateFolder($path, $callables, $output, $traversers, $noProgress, $dirBlacklist);
+                $this->iterateFolder($path, $callables, $output, $traversers, $noProgress, $nodeList);
                 continue;
             }
             if (str_ends_with($file, '.php')) {
@@ -88,23 +97,18 @@ class Check extends Command
                     $noProgress ?: $output->write('#', false, OutputInterface::VERBOSITY_VERBOSE);
                     $nodes = $traverser->traverse($nodes);
                 }
+                $nodeList[$file] = $nodes;
             }
         }
     }
-    public function iterateOverProject(OutputInterface $output, CallableList $callables, Configuration $config, FunctionDefinitionList $functions, InheritanceList $inheritanceList, bool $noProgress): void
+    public function iterateOverProject(OutputInterface $output, CallableList $callables, Configuration $config, InheritanceList $inheritanceList, TypeList $typeList, bool $noProgress): void
     {
         $noProgress ?: $output->writeln('Parsing project');
         $traversers = [];
         foreach ([
-                     new NameResolver(),
-                     new TypeResolver(),
-                     new DeLooper(),
-                     new InheritanceLister($inheritanceList),
-                     new FunctionListBuilder($functions, $callables),
-                     new FallbackToRootNamespaceChecker($functions),
-                     new ConfigurationReader($callables),
-                     new CallStackBuilder($callables),
-                     new RuleChecker($callables, new RuleList(...$config->ruleWhitelist()))
+                    new NameResolver(),
+                    new TypeCollector($typeList),
+                    new InheritanceLister($inheritanceList),
                  ] as $visitor) {
             $traversers[] = new NodeTraverser();
             $traversers[count($traversers) -1]->addVisitor($visitor);
@@ -116,23 +120,19 @@ class Check extends Command
                 $output,
                 $traversers,
                 $noProgress,
+                $this->projectNodes,
             );
         }
         $noProgress ?: $output->writeln('');
     }
-    private function iterateOverDependencies(OutputInterface $output, CallableList $callables, Configuration $config, FunctionDefinitionList $functions, InheritanceList $inheritanceList, bool $noProgress): void
+    private function iterateOverDependencies(OutputInterface $output, CallableList $callables, InheritanceList $inheritanceList, TypeList $typeList, bool $noProgress): void
     {
         $noProgress ?: $output->writeln('Parsing dependencies');
         $traversers = [];
         foreach ([
                      new NameResolver(),
-                     new TypeResolver(),
-                     new DeLooper(),
+                     new TypeCollector($typeList),
                      new InheritanceLister($inheritanceList),
-                     new FunctionListBuilder($functions, $callables),
-                     new FallbackToRootNamespaceChecker($functions),
-                     new CallStackBuilder($callables),
-                     new RuleChecker($callables, new RuleList(...$config->ruleWhitelist()))
                  ] as $visitor) {
             $traversers[] = new NodeTraverser();
             $traversers[count($traversers) -1]->addVisitor($visitor);
@@ -143,6 +143,7 @@ class Check extends Command
             $output,
             $traversers,
             $noProgress,
+            $this->dependencyNodes,
         );
         $noProgress ?: $output->writeln('');
     }
@@ -160,9 +161,75 @@ class Check extends Command
         $inheritanceList = new InheritanceList();
         $callables = new CallableList($config, $inheritanceList);
         $functions = new FunctionDefinitionList();
-        $this->iterateOverProject($output, $callables, $config, $functions, $inheritanceList, (bool) $input->getOption('no-progress'));
-        $this->iterateOverDependencies($output, $callables, $config, $functions, $inheritanceList, (bool) $input->getOption('no-progress'));
+        $typeList = new TypeList($inheritanceList);
+        $this->iterateOverProject($output, $callables, $config, $inheritanceList, $typeList, (bool) $input->getOption('no-progress'));
+        $this->iterateOverDependencies($output, $callables, $inheritanceList, $typeList, (bool) $input->getOption('no-progress'));
+        $this->analyzeProject($output, $callables, $config, $functions, $typeList, (bool) $input->getOption('no-progress'));
+        $this->analyzeDependencies($output, $callables, $config, $functions, $typeList, (bool) $input->getOption('no-progress'));
         $this->iterateOverResults($callables, $output);
         return 0;
+    }
+
+    private function analyzeProject(
+        OutputInterface $output,
+        CallableList $callables,
+        Merged $config,
+        FunctionDefinitionList $functions,
+        TypeList $typeList,
+        bool $noProgress,
+    ) {
+        $noProgress ?: $output->writeln('Analyzing project');
+        $traversers = [];
+        foreach ([
+                     new TypeResolver($typeList),
+                     new DeLooper(),
+                     new FunctionListBuilder($functions, $callables),
+                     new FallbackToRootNamespaceChecker($functions),
+                     new ConfigurationReader($callables),
+                     new CallStackBuilder($callables),
+                     new RuleChecker($callables, new RuleList(...$config->ruleWhitelist()))
+                 ] as $visitor) {
+            $traversers[] = new NodeTraverser();
+            $traversers[count($traversers) -1]->addVisitor($visitor);
+        }
+        foreach ($this->projectNodes as $nodes) {
+            $noProgress ?: $output->write('.');
+            foreach ($traversers as $traverser) {
+                $noProgress ?: $output->write('#', false, OutputInterface::VERBOSITY_VERBOSE);
+                $nodes = $traverser->traverse($nodes);
+            }
+        }
+        $noProgress ?: $output->writeln('');
+    }
+
+    private function analyzeDependencies(
+        OutputInterface $output,
+        CallableList $callables,
+        Merged $config,
+        FunctionDefinitionList $functions,
+        TypeList $typeList,
+        bool $noProgress
+    ) {
+        $noProgress ?: $output->writeln('Analyzing dependencies');
+        $traversers = [];
+        foreach ([
+                     new TypeResolver($typeList),
+                     new DeLooper(),
+                     new FunctionListBuilder($functions, $callables),
+                     new FallbackToRootNamespaceChecker($functions),
+                     new CallStackBuilder($callables),
+                     new RuleChecker($callables, new RuleList(...$config->ruleWhitelist()))
+                 ] as $visitor) {
+            $traversers[] = new NodeTraverser();
+            $traversers[count($traversers) -1]->addVisitor($visitor);
+        }
+        foreach ($this->dependencyNodes as $nodes) {
+            $noProgress ?: $output->write('.');
+            foreach ($traversers as $traverser) {
+                $noProgress ?: $output->write('#', false, OutputInterface::VERBOSITY_VERBOSE);
+                $nodes = $traverser->traverse($nodes);
+            }
+        }
+        $noProgress ?: $output->writeln('');
     }
 }

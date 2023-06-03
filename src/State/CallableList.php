@@ -24,8 +24,9 @@ final class CallableList implements IteratorAggregate
     private function children(
         FunctionLike $callable,
         PHPEnvironment $environment,
-        int $callCount = 1,
+        int|float $callCount = 1,
         int $indent = 0,
+        array $previous = []
     ): Generator {
         $cost = $callable->cost($environment, $callCount);
         if ($cost < $this->configuration->minSeverity()) {
@@ -42,27 +43,39 @@ final class CallableList implements IteratorAggregate
         yield $indentation
             . "{$callCount}x{$callable->name()}@{$environment->name} => {$cost}"
             . (count($rules) > 0 ? "\n$indentation- "  . implode("\n$indentation- ", array_unique($rules)) : '');
+        $previous[$callable->name()] = ($previous[$callable->name()] ?? 0) + 1;
         if (!$callable->isFound() && str_contains($callable->name(), '\\')) {
             foreach ($callable->implementations() as $implementation) {
                 yield from $this->children(
                     $implementation,
                     $environment,
                     $callCount,
-                    $indent + 1
+                    $indent + 1,
+                    $previous,
                 );
             }
             return;
         }
         foreach ($callable->children() as $child) {
-            if ($child->count > 0) {
-                yield from $this->children(
-                    $child->callee,
-                    $environment,
-                    $child->count * $callCount,
-                    $indent + 1
-                );
-            }
+            yield from $this->processChild($child, $environment, $callCount, $indent, $previous);
         }
+    }
+    private function processChild(FunctionLikeCallCount $child, PHPEnvironment $environment, int $callCount, int $indent, array $previous): Generator
+    {
+        if ($child->count < 1) {
+            return;
+        }
+        if (($previous[$child->callee->name()] ?? 0) > 5) {
+            yield str_repeat('  ', $indent+1) . "{$callCount}x{$child->callee->name()}@{$environment->name} => {-recursion-}";
+            return;
+        }
+        yield from $this->children(
+            $child->callee,
+            $environment,
+            $child->count * $callCount,
+            $indent + 1,
+            $previous,
+        );
     }
     public function getIterator(): Generator
     {

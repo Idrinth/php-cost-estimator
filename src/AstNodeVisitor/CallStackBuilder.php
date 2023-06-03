@@ -34,6 +34,9 @@ final class CallStackBuilder extends NodeVisitorAbstract
         if ($node instanceof Node\Expr\StaticCall && $node->class instanceof Node\Name && $node->name instanceof Node\Identifier) {
             $this->callableList->registerCallee($this->context, $node->class->toString() . '::' . $node->name->toString(), 1);
         }
+        if ($node instanceof Node\Expr\StaticCall && $node->class instanceof Node\Expr\Variable && $node->name instanceof Node\Identifier) {
+            $this->callableList->registerCallee($this->context, $node->class->getAttribute('idrinth-type') . '::' . $node->name->toString(), 1);
+        }
         if ($node instanceof Node\Expr\New_ && $node->class instanceof Node\Name) {
             $this->callableList->registerCallee($this->context, $node->class->toString() . '::__construct', 1);
         }

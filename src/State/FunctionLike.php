@@ -28,7 +28,7 @@ final class FunctionLike
      * @var true
      */
     private bool $found = false;
-    private int $cost = -1;
+    private int|float $cost = -1;
 
     public function __construct(
         private readonly string $name,
@@ -44,17 +44,21 @@ final class FunctionLike
     {
         return $this->callableList->has($child . '::' . $func) && $child . '::' . $func !== $this->name;
     }
-    public function cost(PHPEnvironment $environment, int $callFactor = 1): int
+    public function cost(PHPEnvironment $environment, int|float $callFactor = 1, array $recursionLimiter = []): int|float
     {
         if ($this->cost > -1) {
             return $this->cost * $callFactor;
         }
         $cost = 0;
+        if ($recursionLimiter[$this->name] ?? 0 > 5) {
+            return $cost;
+        }
+        $recursionLimiter[$this->name] = ($recursionLimiter[$this->name] ?? 0) + 1;
         if (!$this->found && str_contains($this->name, '::') && str_contains($this->name, '\\')) {
             foreach ($this->inheritanceList->getInheritors(explode('::', $this->name)[0]) as $child) {
                 if ($this->mayCheckCost($child, explode('::', $this->name)[1])) {
                     $callee = $this->callableList->get($child . '::' . explode('::', $this->name)[1]);
-                    $cost += $callee->cost($environment, $callFactor);
+                    $cost += $callee->cost($environment, $callFactor, $recursionLimiter);
                 }
             }
             return $cost;
@@ -80,12 +84,12 @@ final class FunctionLike
                 foreach ($this->inheritanceList->getInheritors(explode('::', $this->name)[0]) as $alternative) {
                     if ($this->mayCheckCost($alternative, explode('::', $child->callee->name())[1])) {
                         $callee = $this->callableList->get($alternative . '::' . explode('::', $child->callee->name())[1]);
-                        $cost += $callee->cost($environment, $callFactor);
+                        $cost += $callee->cost($environment, $callFactor, $recursionLimiter);
                     }
                 }
                 continue;
             }
-            $cost += $child->callee->cost($environment, $child->count * $callFactor);
+            $cost += $child->callee->cost($environment, $child->count * $callFactor, $recursionLimiter);
         }
         $this->cost = $cost/$callFactor;
         return $cost;
