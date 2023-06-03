@@ -24,6 +24,22 @@ final class ParsesStaticTextFile implements Rule
 
     public function applies(Node $astNode): bool
     {
+        if ($astNode instanceof Node\Expr\FuncCall) {
+            $name = $astNode->name;
+            if ($name instanceof Node\Name) {
+                return in_array($name->toString(), ['parse_ini_file', 'simplexml_load_file'], true);
+            }
+        }
+        if ($astNode instanceof Node\Expr\MethodCall) {
+            $name = $astNode->name;
+            $var = $astNode->var;
+            var_dump($name, $var);
+            if ($name instanceof Node\Identifier && $var instanceof Node\Expr\Variable) {
+                return 'load' === $name->toString()
+                    && $var->hasAttribute('idrinth-type')
+                    && 'DOMDocument' === $var->getAttribute('idrinth-type');
+            }
+        }
         return false;
     }
 

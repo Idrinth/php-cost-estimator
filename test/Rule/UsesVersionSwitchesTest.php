@@ -4,10 +4,12 @@ namespace De\Idrinth\PhpCostEstimator\Rule;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
+#[CoversClass(UsesVersionSwitches::class)]
 class UsesVersionSwitchesTest extends TestCase
 {
     public static function provideMatchingAsts(): array
