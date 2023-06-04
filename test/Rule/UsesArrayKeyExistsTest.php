@@ -2,6 +2,7 @@
 
 namespace De\Idrinth\PhpCostEstimator\Rule;
 
+use De\Idrinth\PhpCostEstimator\Cost;
 use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -26,5 +27,17 @@ class UsesArrayKeyExistsTest extends TestCase
     {
         $sut = new UsesArrayKeyExists();
         self::assertTrue($sut->applies($astNode));
+    }
+    #[Test]
+    public function isOfExpectedCost(): void
+    {
+        $sut = new UsesArrayKeyExists();
+        self::assertSame(Cost::LOW, $sut->cost());
+    }
+    #[Test]
+    public function hasReasoning(): void
+    {
+        $sut = new UsesArrayKeyExists();
+        $this->assertNotEmpty($sut->reasoning());
     }
 }

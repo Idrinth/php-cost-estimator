@@ -2,6 +2,7 @@
 
 namespace De\Idrinth\PhpCostEstimator\Rule;
 
+use De\Idrinth\PhpCostEstimator\Cost;
 use PhpParser\Node;
 use PhpParser\Node\Stmt\ClassMethod;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -56,5 +57,17 @@ class UnnecessaryTypeDeclarationTest extends TestCase
     {
         $sut = new UnnecessaryTypeDeclaration();
         self::assertTrue($sut->applies($astNode));
+    }
+    #[Test]
+    public function isOfExpectedCost(): void
+    {
+        $sut = new UnnecessaryTypeDeclaration();
+        self::assertSame(Cost::VERY_LOW, $sut->cost());
+    }
+    #[Test]
+    public function hasReasoning(): void
+    {
+        $sut = new UnnecessaryTypeDeclaration();
+        $this->assertNotEmpty($sut->reasoning());
     }
 }

@@ -2,6 +2,7 @@
 
 namespace De\Idrinth\PhpCostEstimator\Rule;
 
+use De\Idrinth\PhpCostEstimator\Cost;
 use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -35,5 +36,17 @@ class ParsesStaticTextFileTest extends TestCase
     {
         $sut = new ParsesStaticTextFile();
         self::assertTrue($sut->applies($astNode));
+    }
+    #[Test]
+    public function isOfExpectedCost(): void
+    {
+        $sut = new ParsesStaticTextFile();
+        self::assertSame(Cost::MEDIUM_HIGH, $sut->cost());
+    }
+    #[Test]
+    public function hasReasoning(): void
+    {
+        $sut = new ParsesStaticTextFile();
+        $this->assertNotEmpty($sut->reasoning());
     }
 }

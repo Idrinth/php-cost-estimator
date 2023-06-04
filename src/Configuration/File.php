@@ -22,7 +22,7 @@ final class File implements Configuration
     /**
      * @var int|mixed
      */
-    private int $minSeverity;
+    private int $minSeverity = 0;
 
     public function __construct(string $workingDirectory)
     {

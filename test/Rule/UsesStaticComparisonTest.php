@@ -2,6 +2,7 @@
 
 namespace De\Idrinth\PhpCostEstimator\Rule;
 
+use De\Idrinth\PhpCostEstimator\Cost;
 use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -41,5 +42,17 @@ final class UsesStaticComparisonTest extends TestCase
     {
         $sut = new UsesStaticComparison();
         self::assertTrue($sut->applies($astNode));
+    }
+    #[Test]
+    public function isOfExpectedCost(): void
+    {
+        $sut = new UsesStaticComparison();
+        self::assertSame(Cost::VERY_LOW, $sut->cost());
+    }
+    #[Test]
+    public function hasReasoning(): void
+    {
+        $sut = new UsesStaticComparison();
+        $this->assertNotEmpty($sut->reasoning());
     }
 }

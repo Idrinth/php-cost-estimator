@@ -2,6 +2,8 @@
 
 namespace De\Idrinth\PhpCostEstimator\Rule;
 
+use De\Idrinth\PhpCostEstimator\Cost;
+use De\Idrinth\PhpCostEstimator\PHPEnvironment;
 use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -29,5 +31,17 @@ class UsesVersionSwitchesTest extends TestCase
     {
         $sut = new UsesVersionSwitches();
         self::assertTrue($sut->applies($astNode));
+    }
+    #[Test]
+    public function isOfExpectedCost(): void
+    {
+        $sut = new UsesVersionSwitches();
+        self::assertSame(Cost::LOW, $sut->cost());
+    }
+    #[Test]
+    public function hasReasoning(): void
+    {
+        $sut = new UsesVersionSwitches();
+        $this->assertNotEmpty($sut->reasoning());
     }
 }

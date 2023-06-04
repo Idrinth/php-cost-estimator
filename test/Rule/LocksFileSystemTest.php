@@ -2,6 +2,7 @@
 
 namespace De\Idrinth\PhpCostEstimator\Rule;
 
+use De\Idrinth\PhpCostEstimator\Cost;
 use De\Idrinth\PhpCostEstimator\PHPEnvironment;
 use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
@@ -27,5 +28,17 @@ final class LocksFileSystemTest extends TestCase
     {
         $sut = new LocksFileSystem();
         self::assertTrue($sut->applies($astNode));
+    }
+    #[Test]
+    public function isOfExpectedCost(): void
+    {
+        $sut = new LocksFileSystem();
+        self::assertSame(Cost::HIGH, $sut->cost());
+    }
+    #[Test]
+    public function hasReasoning(): void
+    {
+        $sut = new LocksFileSystem();
+        $this->assertNotEmpty($sut->reasoning());
     }
 }

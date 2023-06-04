@@ -2,6 +2,7 @@
 
 namespace De\Idrinth\PhpCostEstimator\Rule;
 
+use De\Idrinth\PhpCostEstimator\Cost;
 use PhpParser\Node;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -46,5 +47,17 @@ final class QueriesDatabaseTest extends TestCase
     {
         $sut = new QueriesDatabase();
         self::assertTrue($sut->applies($astNode));
+    }
+    #[Test]
+    public function isOfExpectedCost(): void
+    {
+        $sut = new QueriesDatabase();
+        self::assertSame(Cost::VERY_LOW, $sut->cost());
+    }
+    #[Test]
+    public function hasReasoning(): void
+    {
+        $sut = new QueriesDatabase();
+        $this->assertNotEmpty($sut->reasoning());
     }
 }

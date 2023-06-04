@@ -42,7 +42,7 @@ final class CallableList implements IteratorAggregate
         }
         $indentation = str_repeat('  ', $indent);;
         yield $indentation
-            . "{$callCount}x{$callable->name()}@{$environment->name} => " . number_format($cost)
+            . number_format($callCount) . "x{$callable->name()}@{$environment->name} => " . number_format($cost)
             . (count($rules) > 0 ? "\n$indentation- "  . implode("\n$indentation- ", array_unique($rules)) : '');
         $previous[$callable->name()] = ($previous[$callable->name()] ?? 0) + 1;
         if (!$callable->isFound() && str_contains($callable->name(), '\\')) {

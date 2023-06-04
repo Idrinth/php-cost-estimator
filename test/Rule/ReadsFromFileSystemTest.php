@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace De\Idrinth\PhpCostEstimator\Rule;
 
+use De\Idrinth\PhpCostEstimator\Cost;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -37,5 +38,17 @@ final class ReadsFromFileSystemTest extends TestCase
     {
         $sut = new ReadsFromFileSystem();
         self::assertTrue($sut->applies($astNode));
+    }
+    #[Test]
+    public function isOfExpectedCost(): void
+    {
+        $sut = new ReadsFromFileSystem();
+        self::assertSame(Cost::MEDIUM_LOW, $sut->cost());
+    }
+    #[Test]
+    public function hasReasoning(): void
+    {
+        $sut = new ReadsFromFileSystem();
+        $this->assertNotEmpty($sut->reasoning());
     }
 }

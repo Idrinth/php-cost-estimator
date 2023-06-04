@@ -20,4 +20,14 @@ class FileTest extends TestCase
         self::assertFalse($sut->checkCleanedDependencies());
         self::assertFalse($sut->checkOptimizedAutoloader());
     }
+    #[Test]
+    public function readNoConfiguration(): void
+    {
+        $sut = new File(__DIR__);
+        self::assertCount(0, iterator_to_array($sut->ruleWhitelist()));
+        self::assertSame([], $sut->foldersToScan());
+        self::assertSame(0, $sut->minSeverity());
+        self::assertFalse($sut->checkCleanedDependencies());
+        self::assertFalse($sut->checkOptimizedAutoloader());
+    }
 }

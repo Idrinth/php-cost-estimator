@@ -10,37 +10,34 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(UsesRemoteCall::class)]
-final class UsesRemoteCallTest extends TestCase
+#[CoversClass(UsesFallbackToRootNamespace::class)]
+class UsesFallbackToRootNamespaceTest extends TestCase
 {
     public static function provideMatchingAsts(): array
     {
         return [
-            'curl_exec' => [
-                new FuncCall(new Node\Name('curl_exec')),
+            'array_key_exists' => [
+                new FuncCall(new Node\Name('array_key_exists'), [], ['idrinth-fallback' => true]),
             ],
-            'curl_multi_exec' => [
-                new FuncCall(new Node\Name('curl_multi_exec')),
-            ]
         ];
     }
     #[Test]
     #[DataProvider('provideMatchingAsts')]
     public function astNodeIsRemoteCall(Node $astNode): void
     {
-        $sut = new UsesRemoteCall();
+        $sut = new UsesFallbackToRootNamespace();
         self::assertTrue($sut->applies($astNode));
     }
     #[Test]
     public function isOfExpectedCost(): void
     {
-        $sut = new UsesRemoteCall();
-        self::assertSame(Cost::MEDIUM_HIGH, $sut->cost());
+        $sut = new UsesFallbackToRootNamespace();
+        self::assertSame(Cost::VERY_LOW, $sut->cost());
     }
     #[Test]
     public function hasReasoning(): void
     {
-        $sut = new UsesRemoteCall();
+        $sut = new UsesFallbackToRootNamespace();
         $this->assertNotEmpty($sut->reasoning());
     }
 }
