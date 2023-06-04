@@ -33,7 +33,6 @@ final class ParsesStaticTextFile implements Rule
         if ($astNode instanceof Node\Expr\MethodCall) {
             $name = $astNode->name;
             $var = $astNode->var;
-            var_dump($name, $var);
             if ($name instanceof Node\Identifier && $var instanceof Node\Expr\Variable) {
                 return 'load' === $name->toString()
                     && $var->hasAttribute('idrinth-type')
