@@ -24,8 +24,7 @@ final class LocksFileSystemTest extends AbstractRuleTestCase
             ],
         ];
     }
-    #[Test]
-    public function getExpectedCost(): Cost
+    protected function getExpectedCost(): Cost
     {
         return Cost::HIGH;
     }

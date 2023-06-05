@@ -6,10 +6,11 @@ namespace De\Idrinth\PhpCostEstimator\Rule;
 
 use De\Idrinth\PhpCostEstimator\Cost;
 use De\Idrinth\PhpCostEstimator\PHPEnvironment;
+use De\Idrinth\PhpCostEstimator\Rule;
 use De\Idrinth\PhpCostEstimator\RuleSet;
 use PhpParser\Node;
 
-final class WritesToFileSystem implements \De\Idrinth\PhpCostEstimator\Rule
+final class WritesToFileSystem implements Rule
 {
     public function reasoning(): string
     {
