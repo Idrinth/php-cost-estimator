@@ -30,7 +30,7 @@ final class UsesReflection implements Rule
                 'ReflectionMethod',
                 'ReflectionFunction',
                 'ReflectionAttribute',
-            ]);
+            ], true);
         }
         return false;
     }

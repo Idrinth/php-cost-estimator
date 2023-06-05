@@ -56,6 +56,6 @@ final class Merged implements Configuration
 
     public function minSeverity(): int
     {
-        return 0;
+        return max(array_map(fn (Configuration $configuration): int => $configuration->minSeverity(), $this->configurations));
     }
 }
