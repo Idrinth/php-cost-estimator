@@ -3,6 +3,8 @@
 namespace De\Idrinth\PhpCostEstimator\Rule;
 
 use De\Idrinth\PhpCostEstimator\Cost;
+use De\Idrinth\PhpCostEstimator\Rule;
+use De\Idrinth\PhpCostEstimator\RuleSet;
 use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -11,9 +13,9 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(UsesRemoteCall::class)]
-final class UsesRemoteCallTest extends TestCase
+final class UsesRemoteCallTest extends AbstractRuleTestCase
 {
-    public static function provideMatchingAsts(): array
+    public static function provideMatchingASTs(): array
     {
         return [
             'curl_exec' => [
@@ -24,23 +26,16 @@ final class UsesRemoteCallTest extends TestCase
             ]
         ];
     }
-    #[Test]
-    #[DataProvider('provideMatchingAsts')]
-    public function astNodeIsRemoteCall(Node $astNode): void
+    public function getExpectedCost(): Cost
     {
-        $sut = new UsesRemoteCall();
-        self::assertTrue($sut->applies($astNode));
+        return Cost::MEDIUM_HIGH;
     }
-    #[Test]
-    public function isOfExpectedCost(): void
+    public function getRule(): Rule
     {
-        $sut = new UsesRemoteCall();
-        self::assertSame(Cost::MEDIUM_HIGH, $sut->cost());
+        return new UsesRemoteCall();
     }
-    #[Test]
-    public function hasReasoning(): void
+    public function getExpectedGroup(): RuleSet
     {
-        $sut = new UsesRemoteCall();
-        $this->assertNotEmpty($sut->reasoning());
+        return RuleSet::BEST_PRACTICES;
     }
 }

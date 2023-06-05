@@ -3,16 +3,15 @@
 namespace De\Idrinth\PhpCostEstimator\Rule;
 
 use De\Idrinth\PhpCostEstimator\Cost;
+use De\Idrinth\PhpCostEstimator\Rule;
+use De\Idrinth\PhpCostEstimator\RuleSet;
 use PhpParser\Node;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\TestCase;
 
 #[CoversClass(QueriesDatabase::class)]
-final class QueriesDatabaseTest extends TestCase
+final class QueriesDatabaseTest extends AbstractRuleTestCase
 {
-    public static function provideMatchingAsts(): array
+    public static function provideMatchingASTs(): array
     {
         return [
             'PDO::prepare' => [
@@ -41,23 +40,16 @@ final class QueriesDatabaseTest extends TestCase
             ],
         ];
     }
-    #[Test]
-    #[DataProvider('provideMatchingAsts')]
-    public function astNodeIsStaticComparison(Node $astNode): void
+    protected function getExpectedCost(): Cost
     {
-        $sut = new QueriesDatabase();
-        self::assertTrue($sut->applies($astNode));
+        return Cost::VERY_LOW;
     }
-    #[Test]
-    public function isOfExpectedCost(): void
+    protected function getRule(): Rule
     {
-        $sut = new QueriesDatabase();
-        self::assertSame(Cost::VERY_LOW, $sut->cost());
+        return new QueriesDatabase();
     }
-    #[Test]
-    public function hasReasoning(): void
+    protected function getExpectedGroup(): RuleSet
     {
-        $sut = new QueriesDatabase();
-        $this->assertNotEmpty($sut->reasoning());
+        return RuleSet::DESIGN_FLAW;
     }
 }

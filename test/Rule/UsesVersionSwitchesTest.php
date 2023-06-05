@@ -3,18 +3,16 @@
 namespace De\Idrinth\PhpCostEstimator\Rule;
 
 use De\Idrinth\PhpCostEstimator\Cost;
-use De\Idrinth\PhpCostEstimator\PHPEnvironment;
+use De\Idrinth\PhpCostEstimator\Rule;
+use De\Idrinth\PhpCostEstimator\RuleSet;
 use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\TestCase;
 
 #[CoversClass(UsesVersionSwitches::class)]
-class UsesVersionSwitchesTest extends TestCase
+class UsesVersionSwitchesTest extends AbstractRuleTestCase
 {
-    public static function provideMatchingAsts(): array
+    public static function provideMatchingASTs(): array
     {
         return [
             'PHP_VERSION' => [
@@ -25,23 +23,16 @@ class UsesVersionSwitchesTest extends TestCase
             ],
         ];
     }
-    #[Test]
-    #[DataProvider('provideMatchingAsts')]
-    public function astNodeIsVersionSwitch(Node $astNode): void
+    protected function getExpectedCost(): Cost
     {
-        $sut = new UsesVersionSwitches();
-        self::assertTrue($sut->applies($astNode));
+        return Cost::LOW;
     }
-    #[Test]
-    public function isOfExpectedCost(): void
+    protected function getRule(): Rule
     {
-        $sut = new UsesVersionSwitches();
-        self::assertSame(Cost::LOW, $sut->cost());
+        return new UsesVersionSwitches();
     }
-    #[Test]
-    public function hasReasoning(): void
+    protected function getExpectedGroup(): RuleSet
     {
-        $sut = new UsesVersionSwitches();
-        $this->assertNotEmpty($sut->reasoning());
+        return RuleSet::CONTROVERSIAL;
     }
 }

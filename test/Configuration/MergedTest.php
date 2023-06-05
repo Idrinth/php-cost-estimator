@@ -33,4 +33,14 @@ class MergedTest extends TestCase
         self::assertCount(0, iterator_to_array($configuration->ruleWhitelist()));
         self::assertSame([], iterator_to_array($configuration->foldersToScan()));
     }
+    #[Test]
+    public function constructionReadsOutDefaultValuesGivenNoConfiguration(): void
+    {
+        $configuration = new Merged();
+        self::assertSame(0, $configuration->minSeverity());
+        self::assertFalse($configuration->checkCleanedDependencies());
+        self::assertFalse($configuration->checkOptimizedAutoloader());
+        self::assertCount(0, iterator_to_array($configuration->ruleWhitelist()));
+        self::assertSame([], iterator_to_array($configuration->foldersToScan()));
+    }
 }

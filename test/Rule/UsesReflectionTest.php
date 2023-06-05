@@ -3,6 +3,8 @@
 namespace De\Idrinth\PhpCostEstimator\Rule;
 
 use De\Idrinth\PhpCostEstimator\Cost;
+use De\Idrinth\PhpCostEstimator\Rule;
+use De\Idrinth\PhpCostEstimator\RuleSet;
 use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -11,9 +13,9 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(UsesReflection::class)]
-class UsesReflectionTest extends TestCase
+class UsesReflectionTest extends AbstractRuleTestCase
 {
-    public static function provideMatchingAsts(): array
+    public static function provideMatchingASTs(): array
     {
         return [
             'ReflectionClass' => [
@@ -27,23 +29,16 @@ class UsesReflectionTest extends TestCase
             ],
         ];
     }
-    #[Test]
-    #[DataProvider('provideMatchingAsts')]
-    public function astNodeIsReflection(Node $astNode): void
+    protected function getExpectedCost(): Cost
     {
-        $sut = new UsesReflection();
-        self::assertTrue($sut->applies($astNode));
+        return Cost::MEDIUM_LOW;
     }
-    #[Test]
-    public function isOfExpectedCost(): void
+    protected function getRule(): Rule
     {
-        $sut = new UsesReflection();
-        self::assertSame(Cost::MEDIUM_LOW, $sut->cost());
+        return new UsesReflection();
     }
-    #[Test]
-    public function hasReasoning(): void
+    protected function getExpectedGroup(): RuleSet
     {
-        $sut = new UsesReflection();
-        $this->assertNotEmpty($sut->reasoning());
+        return RuleSet::BUILD_PROCESS_ISSUE;
     }
 }

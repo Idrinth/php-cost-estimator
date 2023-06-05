@@ -3,17 +3,16 @@
 namespace De\Idrinth\PhpCostEstimator\Rule;
 
 use De\Idrinth\PhpCostEstimator\Cost;
+use De\Idrinth\PhpCostEstimator\Rule;
+use De\Idrinth\PhpCostEstimator\RuleSet;
 use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\TestCase;
 
 #[CoversClass(UsesArrayKeyExists::class)]
-class UsesArrayKeyExistsTest extends TestCase
+class UsesArrayKeyExistsTest extends AbstractRuleTestCase
 {
-    public static function provideMatchingAsts(): array
+    public static function provideMatchingASTs(): array
     {
         return [
             'array_key_exists' => [
@@ -21,23 +20,16 @@ class UsesArrayKeyExistsTest extends TestCase
             ],
         ];
     }
-    #[Test]
-    #[DataProvider('provideMatchingAsts')]
-    public function astNodeIsRemoteCall(Node $astNode): void
+    protected function getExpectedCost(): Cost
     {
-        $sut = new UsesArrayKeyExists();
-        self::assertTrue($sut->applies($astNode));
+        return Cost::LOW;
     }
-    #[Test]
-    public function isOfExpectedCost(): void
+    protected function getRule(): Rule
     {
-        $sut = new UsesArrayKeyExists();
-        self::assertSame(Cost::LOW, $sut->cost());
+        return new UsesArrayKeyExists();
     }
-    #[Test]
-    public function hasReasoning(): void
+    protected function getExpectedGroup(): RuleSet
     {
-        $sut = new UsesArrayKeyExists();
-        $this->assertNotEmpty($sut->reasoning());
+        return RuleSet::BEST_PRACTICES;
     }
 }

@@ -3,17 +3,16 @@
 namespace De\Idrinth\PhpCostEstimator\Rule;
 
 use De\Idrinth\PhpCostEstimator\Cost;
+use De\Idrinth\PhpCostEstimator\Rule;
+use De\Idrinth\PhpCostEstimator\RuleSet;
 use PhpParser\Node;
 use PhpParser\Node\Stmt\ClassMethod;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\TestCase;
 
 #[CoversClass(UnnecessaryTypeDeclaration::class)]
-class UnnecessaryTypeDeclarationTest extends TestCase
+class UnnecessaryTypeDeclarationTest extends AbstractRuleTestCase
 {
-    public static function provideMatchingAsts(): array
+    public static function provideMatchingASTs(): array
     {
         return [
             'private function func(Var $a)' => [
@@ -51,23 +50,16 @@ class UnnecessaryTypeDeclarationTest extends TestCase
             ]
         ];
     }
-    #[Test]
-    #[DataProvider('provideMatchingAsts')]
-    public function astNodeIsStaticComparison(Node $astNode): void
+    protected function getExpectedCost(): Cost
     {
-        $sut = new UnnecessaryTypeDeclaration();
-        self::assertTrue($sut->applies($astNode));
+        return Cost::VERY_LOW;
     }
-    #[Test]
-    public function isOfExpectedCost(): void
+    protected function getRule(): Rule
     {
-        $sut = new UnnecessaryTypeDeclaration();
-        self::assertSame(Cost::VERY_LOW, $sut->cost());
+        return new UnnecessaryTypeDeclaration();
     }
-    #[Test]
-    public function hasReasoning(): void
+    protected function getExpectedGroup(): RuleSet
     {
-        $sut = new UnnecessaryTypeDeclaration();
-        $this->assertNotEmpty($sut->reasoning());
+        return RuleSet::CONTROVERSIAL;
     }
 }

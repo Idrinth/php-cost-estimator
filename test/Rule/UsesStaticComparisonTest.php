@@ -3,6 +3,8 @@
 namespace De\Idrinth\PhpCostEstimator\Rule;
 
 use De\Idrinth\PhpCostEstimator\Cost;
+use De\Idrinth\PhpCostEstimator\Rule;
+use De\Idrinth\PhpCostEstimator\RuleSet;
 use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -11,9 +13,9 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(UsesStaticComparison::class)]
-final class UsesStaticComparisonTest extends TestCase
+final class UsesStaticComparisonTest extends AbstractRuleTestCase
 {
-    public static function provideMatchingAsts(): array
+    public static function provideMatchingASTs(): array
     {
         return [
             'PHP_VERSION' => [
@@ -36,23 +38,16 @@ final class UsesStaticComparisonTest extends TestCase
             ],
         ];
     }
-    #[Test]
-    #[DataProvider('provideMatchingAsts')]
-    public function astNodeIsStaticComparison(Node $astNode): void
+    protected function getExpectedCost(): Cost
     {
-        $sut = new UsesStaticComparison();
-        self::assertTrue($sut->applies($astNode));
+        return Cost::VERY_LOW;
     }
-    #[Test]
-    public function isOfExpectedCost(): void
+    protected function getRule(): Rule
     {
-        $sut = new UsesStaticComparison();
-        self::assertSame(Cost::VERY_LOW, $sut->cost());
+        return new UsesStaticComparison();
     }
-    #[Test]
-    public function hasReasoning(): void
+    protected function getExpectedGroup(): RuleSet
     {
-        $sut = new UsesStaticComparison();
-        $this->assertNotEmpty($sut->reasoning());
+        return RuleSet::BUILD_PROCESS_ISSUE;
     }
 }

@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace De\Idrinth\PhpCostEstimator\Rule;
 
 use De\Idrinth\PhpCostEstimator\Cost;
+use De\Idrinth\PhpCostEstimator\Rule;
+use De\Idrinth\PhpCostEstimator\RuleSet;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -13,9 +15,9 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(ReadsFromFileSystem::class)]
-final class ReadsFromFileSystemTest extends TestCase
+final class ReadsFromFileSystemTest extends AbstractRuleTestCase
 {
-    public static function provideMatchingAsts(): array
+    public static function provideMatchingASTs(): array
     {
         return [
             'file_get_contents' => [
@@ -32,23 +34,16 @@ final class ReadsFromFileSystemTest extends TestCase
             ],
         ];
     }
-    #[Test]
-    #[DataProvider('provideMatchingAsts')]
-    public function astNodeIsFileSystemRead(Node $astNode): void
+    protected function getExpectedCost(): Cost
     {
-        $sut = new ReadsFromFileSystem();
-        self::assertTrue($sut->applies($astNode));
+        return Cost::MEDIUM_LOW;
     }
-    #[Test]
-    public function isOfExpectedCost(): void
+    protected function getRule(): Rule
     {
-        $sut = new ReadsFromFileSystem();
-        self::assertSame(Cost::MEDIUM_LOW, $sut->cost());
+        return new ReadsFromFileSystem();
     }
-    #[Test]
-    public function hasReasoning(): void
+    protected function getExpectedGroup(): RuleSet
     {
-        $sut = new ReadsFromFileSystem();
-        $this->assertNotEmpty($sut->reasoning());
+        return RuleSet::BEST_PRACTICES;
     }
 }

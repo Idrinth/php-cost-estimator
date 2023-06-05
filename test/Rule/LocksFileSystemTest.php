@@ -4,6 +4,8 @@ namespace De\Idrinth\PhpCostEstimator\Rule;
 
 use De\Idrinth\PhpCostEstimator\Cost;
 use De\Idrinth\PhpCostEstimator\PHPEnvironment;
+use De\Idrinth\PhpCostEstimator\Rule;
+use De\Idrinth\PhpCostEstimator\RuleSet;
 use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -12,9 +14,9 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(LocksFileSystem::class)]
-final class LocksFileSystemTest extends TestCase
+final class LocksFileSystemTest extends AbstractRuleTestCase
 {
-    public static function provideMatchingAsts(): array
+    public static function provideMatchingASTs(): array
     {
         return [
             'flock' => [
@@ -23,22 +25,17 @@ final class LocksFileSystemTest extends TestCase
         ];
     }
     #[Test]
-    #[DataProvider('provideMatchingAsts')]
-    public function astNodeIsFileSystemRead(Node $astNode): void
+    public function getExpectedCost(): Cost
     {
-        $sut = new LocksFileSystem();
-        self::assertTrue($sut->applies($astNode));
+        return Cost::HIGH;
     }
-    #[Test]
-    public function isOfExpectedCost(): void
+    protected function getExpectedGroup(): RuleSet
     {
-        $sut = new LocksFileSystem();
-        self::assertSame(Cost::HIGH, $sut->cost());
+        return RuleSet::DESIGN_FLAW;
     }
-    #[Test]
-    public function hasReasoning(): void
+
+    protected function getRule(): Rule
     {
-        $sut = new LocksFileSystem();
-        $this->assertNotEmpty($sut->reasoning());
+        return new LocksFileSystem();
     }
 }

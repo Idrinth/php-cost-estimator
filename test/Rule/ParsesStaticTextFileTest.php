@@ -3,6 +3,7 @@
 namespace De\Idrinth\PhpCostEstimator\Rule;
 
 use De\Idrinth\PhpCostEstimator\Cost;
+use De\Idrinth\PhpCostEstimator\RuleSet;
 use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -48,5 +49,11 @@ class ParsesStaticTextFileTest extends TestCase
     {
         $sut = new ParsesStaticTextFile();
         $this->assertNotEmpty($sut->reasoning());
+    }
+    #[Test]
+    public function hasExpectedGroup(): void
+    {
+        $sut = new ParsesStaticTextFile();
+        $this->assertSame(RuleSet::BUILD_PROCESS_ISSUE, $sut->set());
     }
 }
