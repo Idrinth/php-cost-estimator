@@ -24,10 +24,13 @@ class TypeResolver extends NodeVisitorAbstract
         }
         if ($node instanceof Node\Stmt\Property) {
             foreach ($node->props as $property) {
-                if (property_exists($property, 'type') && $property->type instanceof Node\Identifier) {
+                if (property_exists($property, 'type') && $property->type instanceof Node\Name) {
                     $this->properties[$property->name->toString()] = $node->type->toString();
                 }
             }
+        }
+        if ($node instanceof Node\Param && $node->type instanceof Node\Name) {
+            $this->variables[$node->var->name . ''] = $node->type->toString();
         }
         if ($node instanceof Node\Expr\Assign) {
             $expr = $node->expr;
@@ -68,14 +71,29 @@ class TypeResolver extends NodeVisitorAbstract
                 if ($expr->name instanceof Node\Name) {
                     $this->variables[$var->name . ''] = $this->types->getFunctionReturnType($expr->name->toString());
                 }
+            } elseif ($expr instanceof Node\Expr\Array_ && $var instanceof Node\Expr\Variable) {
+                $firstItem = $expr->items[0] ?? null;
+                if ($firstItem instanceof Node\Expr\ArrayItem && $firstItem->value instanceof Node\Expr\New_) {
+                    if ($firstItem->value->class instanceof Node\Name) {
+                        $this->variables[$var->name . ''] = $firstItem->value->class->toString() . '[]';
+                    } elseif ($firstItem->value->class instanceof Node\Stmt\Class_) {
+                        $this->variables[$var->name . ''] = $firstItem->value->class->name->toString() . '[]';;
+                    }
+                }
             }
         }
         if ($node instanceof Node\Expr\Variable) {
             if (isset($this->variables[$node->name . ''])) {
                 $node->setAttribute('idrinth-type', $this->variables[$node->name . '']);
             } else {
-                #var_dump($node->name, $this->variables, $this->class);
-                #die;
+                $node->setAttribute('idrinth-type', '{UNKNOWN}');
+            }
+        }
+        if ($node instanceof Node\Stmt\Foreach_) {
+            if ($node->valueVar instanceof Node\Expr\Variable && $node->expr instanceof Node\Expr\Variable && isset($this->variables[$node->expr->name . ''])) {
+                $type = str_replace('[]', '', $this->variables[$node->expr->name . '']);
+                $node->valueVar->setAttribute('idrinth-type', $type);
+                $this->variables[$node->valueVar->name . ''] = $type;
             }
         }
         if ($node instanceof Node\Expr\PropertyFetch) {
