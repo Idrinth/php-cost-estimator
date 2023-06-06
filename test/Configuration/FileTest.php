@@ -14,7 +14,7 @@ class FileTest extends TestCase
     public function readThisProjectsConfiguration(): void
     {
         $sut = new File(__DIR__ . '/../..');
-        self::assertCount(16, iterator_to_array($sut->ruleWhitelist()));
+        self::assertCount(13, iterator_to_array($sut->ruleWhitelist()));
         self::assertSame(['src'], $sut->foldersToScan());
         self::assertSame(1, $sut->minSeverity());
         self::assertFalse($sut->checkCleanedDependencies());

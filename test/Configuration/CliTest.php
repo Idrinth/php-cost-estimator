@@ -2,7 +2,7 @@
 
 namespace De\Idrinth\PhpCostEstimator\Configuration;
 
-use De\Idrinth\PhpCostEstimator\Rule\BuildsUnusedObject;
+use De\Idrinth\PhpCostEstimator\Rule\UsesReflection;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -18,7 +18,7 @@ class CliTest extends TestCase
         $input->expects($this->exactly(2))
             ->method('getOption')
             ->withAnyParameters()
-            ->willReturnOnConsecutiveCalls(['1'], ['BuildsUnusedObject']);
+            ->willReturnOnConsecutiveCalls(['1'], ['UsesReflection']);
         $input->expects($this->exactly(2))
             ->method('hasOption')
             ->withAnyParameters()
@@ -27,7 +27,7 @@ class CliTest extends TestCase
         self::assertSame(1, $configuration->minSeverity());
         self::assertTrue($configuration->checkCleanedDependencies());
         self::assertTrue($configuration->checkOptimizedAutoloader());
-        self::assertSame(BuildsUnusedObject::class, get_class(iterator_to_array($configuration->ruleWhitelist())[0]));
+        self::assertSame(UsesReflection::class, get_class(iterator_to_array($configuration->ruleWhitelist())[0]));
         self::assertSame([], iterator_to_array($configuration->foldersToScan()));
     }
 }
