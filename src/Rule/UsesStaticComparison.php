@@ -24,6 +24,20 @@ class UsesStaticComparison implements Rule
 
     public function applies(Node $astNode): bool
     {
+        if ($astNode instanceof Node\Expr\FuncCall && $astNode->name instanceof Node\Name && $astNode->name->toLowerString() === 'in_array') {
+            if ($astNode->args[1]->value instanceof Node\Scalar && $astNode->args[1]->value instanceof Node\Expr\Array_) {
+                return true;
+            }
+            if ($astNode->args[1]->value instanceof Node\Expr\ConstFetch && $astNode->args[1]->value instanceof Node\Expr\Array_) {
+                return true;
+            }
+            if ($astNode->args[1]->value instanceof Node\Expr\ClassConstFetch && $astNode->args[1]->value instanceof Node\Expr\Array_) {
+                return true;
+            }
+            if ($astNode->args[1]->value instanceof Node\Expr\Array_ && count($astNode->args[1]->value->items) === 0) {
+                return true;
+            }
+        }
         if (!($astNode instanceof Node\Expr\BinaryOp)) {
             return false;
         }

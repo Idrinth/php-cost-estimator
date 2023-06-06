@@ -6,7 +6,13 @@ use De\Idrinth\PhpCostEstimator\Cost;
 use De\Idrinth\PhpCostEstimator\Rule;
 use De\Idrinth\PhpCostEstimator\RuleSet;
 use PhpParser\Node;
+use PhpParser\Node\Arg;
+use PhpParser\Node\Expr\Array_;
+use PhpParser\Node\Expr\ArrayItem;
+use PhpParser\Node\Expr\ConstFetch;
 use PhpParser\Node\Expr\FuncCall;
+use PhpParser\Node\Name;
+use PhpParser\Node\Scalar\DNumber;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -35,6 +41,13 @@ final class UsesStaticComparisonTest extends AbstractRuleTestCase
                     new Node\Scalar\LNumber(1),
                     new Node\Scalar\LNumber(2),
                 ),
+            ],
+            'in_array(1, [...100...], true)' => [
+                new FuncCall(new Name('in_array'), [
+                    new Arg(new DNumber(1)),
+                    new Arg(new Array_(array_fill(0, 2, new ArrayItem(new DNumber(1))))),
+                    new Arg(new ConstFetch(new Name('true'))),
+                ]),
             ],
         ];
     }

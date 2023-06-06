@@ -3,13 +3,10 @@ declare(strict_types=1);
 
 return [
     'rules' => [
-        'De\\Idrinth\\PhpCostEstimator\\Rule\\BuildsUnusedObject',
-        'De\\Idrinth\\PhpCostEstimator\\Rule\\ConnectsToUnusedDatabase',
         'De\\Idrinth\\PhpCostEstimator\\Rule\\LocksFileSystem',
         'De\\Idrinth\\PhpCostEstimator\\Rule\\ParsesStaticTextFile',
         'De\\Idrinth\\PhpCostEstimator\\Rule\\QueriesDatabase',
         'De\\Idrinth\\PhpCostEstimator\\Rule\\ReadsFromFileSystem',
-        'De\\Idrinth\\PhpCostEstimator\\Rule\\UnnecessaryCaching',
         'De\\Idrinth\\PhpCostEstimator\\Rule\\UnnecessaryTypeDeclaration',
         'De\\Idrinth\\PhpCostEstimator\\Rule\\UsesArrayKeyExists',
         'De\\Idrinth\\PhpCostEstimator\\Rule\\UsesFallbackToRootNamespace',
