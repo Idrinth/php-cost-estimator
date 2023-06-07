@@ -48,4 +48,9 @@ final readonly class Cli implements Configuration
     {
         return (int) $this->input->getOption('min-severity');
     }
+
+    public function starters(): iterable
+    {
+        return [];
+    }
 }

@@ -20,9 +20,13 @@ final class File implements Configuration
      */
     private array $folders = [];
     /**
-     * @var int|mixed
+     * @var int
      */
     private int $minSeverity = 0;
+    /**
+     * @var string[]
+     */
+    private array $starters = [];
 
     public function __construct(string $workingDirectory)
     {
@@ -36,6 +40,7 @@ final class File implements Configuration
         $this->rules = $data['rules'] ?? [];
         $this->folders = $data['folders'] ?? [];
         $this->minSeverity = $data['minSeverity'] ?? 1;
+        $this->starters = $data['starters'] ?? [];
     }
 
     /**
@@ -65,5 +70,10 @@ final class File implements Configuration
     public function minSeverity(): int
     {
         return $this->minSeverity;
+    }
+
+    public function starters(): iterable
+    {
+        return $this->starters;
     }
 }

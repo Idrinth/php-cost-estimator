@@ -61,4 +61,11 @@ final class Merged implements Configuration
         }
         return max(0, ...array_map(fn (Configuration $configuration): int => $configuration->minSeverity(), $this->configurations));
     }
+
+    public function starters(): iterable
+    {
+        foreach ($this->configurations as $configuration) {
+            yield from $configuration->starters();
+        }
+    }
 }

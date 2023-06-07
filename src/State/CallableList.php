@@ -88,6 +88,11 @@ final class CallableList implements IteratorAggregate
                 yield from $this->children($callable, $environment, $callable->callFactor(), $callable->recursionDepth());
             }
         }
+        foreach ($this->configuration->starters() as $starter => $environment) {
+            if (isset($this->callables[$starter]) && !$this->callables[$starter]->isRoot()) {
+                yield from $this->children($this->callables[$starter], $environment, 1, 5);
+            }
+        }
     }
     public function registerDefinition(
         string $name,

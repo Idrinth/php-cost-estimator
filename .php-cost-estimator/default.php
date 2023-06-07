@@ -5,6 +5,8 @@ return [
     'rules' => [
         ##RULES##
     ],
+    'starters' => [
+    ],
     'folders' => [
         'src'
     ]

@@ -14,6 +14,10 @@ interface Configuration
      * @return iterable<string>
      */
     public function foldersToScan(): iterable;
+    /**
+     * @return iterable<string>
+     */
+    public function starters(): iterable;
     public function checkCleanedDependencies(): bool;
     public function checkOptimizedAutoloader(): bool;
     public function minSeverity(): int;
