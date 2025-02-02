@@ -5,7 +5,9 @@ namespace De\Idrinth\PhpCostEstimator\Rule;
 use De\Idrinth\PhpCostEstimator\Cost;
 use De\Idrinth\PhpCostEstimator\Rule;
 use De\Idrinth\PhpCostEstimator\RuleSet;
+use PhpParser\Modifiers;
 use PhpParser\Node;
+use PhpParser\Node\Identifier;
 use PhpParser\Node\Stmt\ClassMethod;
 use PHPUnit\Framework\Attributes\CoversClass;
 
@@ -19,9 +21,9 @@ class UnnecessaryTypeDeclarationTest extends AbstractRuleTestCase
                 new ClassMethod(
                     'func',
                     [
-                        'flags' => Node\Stmt\Class_::MODIFIER_PRIVATE,
+                        'flags' => Modifiers::PRIVATE,
                         'params' => [
-                            new Node\Param(new Node\Expr\Variable('a'), null, 'Var'),
+                            new Node\Param(new Node\Expr\Variable('a'), null, new Identifier('Var')),
                         ]
                     ],
                     [],
@@ -34,7 +36,7 @@ class UnnecessaryTypeDeclarationTest extends AbstractRuleTestCase
                         'flags' => Node\Stmt\Class_::MODIFIER_PRIVATE,
                         'params' => [
                             new Node\Param(new Node\Expr\Variable('b')),
-                            new Node\Param(new Node\Expr\Variable('a'), null, 'Var'),
+                            new Node\Param(new Node\Expr\Variable('a'), null, new Identifier('Var')),
                         ]
                     ],
                     [],
@@ -42,10 +44,10 @@ class UnnecessaryTypeDeclarationTest extends AbstractRuleTestCase
             ],
             [
                 new Node\Stmt\Property(
-                    Node\Stmt\Class_::MODIFIER_PRIVATE,
+                    Modifiers::PRIVATE,
                     [new Node\Stmt\PropertyProperty('name', null)],
                     [],
-                    'Type'
+                    new Identifier('Type')
                 )
             ]
         ];

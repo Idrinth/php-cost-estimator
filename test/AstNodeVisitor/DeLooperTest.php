@@ -28,7 +28,7 @@ class DeLooperTest extends TestCase
     #[Test]
     public function filledEnlargedStructureViForMatchesExpectation(): void
     {
-        $expectation = '[{"nodeType":"Scalar_LNumber","attributes":[],"value":111},{"nodeType":"Scalar_LNumber","attributes":[],"value":111},{"nodeType":"Scalar_LNumber","attributes":[],"value":111},{"nodeType":"Scalar_LNumber","attributes":[],"value":111},{"nodeType":"Scalar_LNumber","attributes":[],"value":111}]';
+        $expectation = '[{"nodeType":"Scalar_Int","attributes":[],"value":111},{"nodeType":"Scalar_Int","attributes":[],"value":111},{"nodeType":"Scalar_Int","attributes":[],"value":111},{"nodeType":"Scalar_Int","attributes":[],"value":111},{"nodeType":"Scalar_Int","attributes":[],"value":111}]';
         $ast = new For_([
             'stmts' => [new LNumber(111)],
         ]);
@@ -38,7 +38,7 @@ class DeLooperTest extends TestCase
     #[Test]
     public function filledEnlargedStructureViaWhileMatchesExpectation(): void
     {
-        $expectation = '[{"nodeType":"Scalar_DNumber","attributes":[],"value":111},{"nodeType":"Scalar_DNumber","attributes":[],"value":111},{"nodeType":"Scalar_DNumber","attributes":[],"value":111},{"nodeType":"Scalar_DNumber","attributes":[],"value":111},{"nodeType":"Scalar_DNumber","attributes":[],"value":111}]';
+        $expectation = '[{"nodeType":"Scalar_Float","attributes":[],"value":111},{"nodeType":"Scalar_Float","attributes":[],"value":111},{"nodeType":"Scalar_Float","attributes":[],"value":111},{"nodeType":"Scalar_Float","attributes":[],"value":111},{"nodeType":"Scalar_Float","attributes":[],"value":111}]';
         $ast = new While_(
             new Equal(new DNumber(1), new DNumber(1)),
             [new DNumber(111)]
@@ -49,7 +49,7 @@ class DeLooperTest extends TestCase
     #[Test]
     public function filledEnlargedStructureViaDOWhileMatchesExpectation(): void
     {
-        $expectation = '[{"nodeType":"Scalar_DNumber","attributes":[],"value":111},{"nodeType":"Scalar_DNumber","attributes":[],"value":111},{"nodeType":"Scalar_DNumber","attributes":[],"value":111},{"nodeType":"Scalar_DNumber","attributes":[],"value":111},{"nodeType":"Scalar_DNumber","attributes":[],"value":111}]';
+        $expectation = '[{"nodeType":"Scalar_Float","attributes":[],"value":111},{"nodeType":"Scalar_Float","attributes":[],"value":111},{"nodeType":"Scalar_Float","attributes":[],"value":111},{"nodeType":"Scalar_Float","attributes":[],"value":111},{"nodeType":"Scalar_Float","attributes":[],"value":111}]';
         $ast = new Do_(
             new Equal(new DNumber(1), new DNumber(1)),
             [new DNumber(111)]
@@ -60,7 +60,7 @@ class DeLooperTest extends TestCase
     #[Test]
     public function filledEnlargedStructureViaForeachMatchesExpectation(): void
     {
-        $expectation = '[{"nodeType":"Scalar_DNumber","attributes":[],"value":111},{"nodeType":"Scalar_DNumber","attributes":[],"value":111},{"nodeType":"Scalar_DNumber","attributes":[],"value":111},{"nodeType":"Scalar_DNumber","attributes":[],"value":111},{"nodeType":"Scalar_DNumber","attributes":[],"value":111}]';
+        $expectation = '[{"nodeType":"Scalar_Float","attributes":[],"value":111},{"nodeType":"Scalar_Float","attributes":[],"value":111},{"nodeType":"Scalar_Float","attributes":[],"value":111},{"nodeType":"Scalar_Float","attributes":[],"value":111},{"nodeType":"Scalar_Float","attributes":[],"value":111}]';
         $ast = new Foreach_(new Variable('a'), new Variable('b'), ['stmts' => [new DNumber(111)]]);
         $visitor = new DeLooper();
         self::assertJsonStringEqualsJsonString($expectation, json_encode($visitor->leaveNode($ast)));
