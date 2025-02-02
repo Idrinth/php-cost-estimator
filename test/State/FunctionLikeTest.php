@@ -16,14 +16,14 @@ final class FunctionLikeTest extends TestCase
     #[Test]
     public function emptyFunctionHasNoCost(): void
     {
-        $this->markTestSkipped();
+        $this->markTestIncomplete();
         $functionLike = new FunctionLike('test', new InheritanceList(), new CallableList($this->createStub(Configuration::class), new InheritanceList()));
         self::assertSame(0, $functionLike->cost(PHPEnvironment::WEB));
     }
     #[Test]
     public function readingFromFileSystemHasACostOfFour(): void
     {
-        $this->markTestSkipped();
+        $this->markTestIncomplete();
         $rule = $this->createMock(Rule::class);
         $rule
             ->expects(self::once())
@@ -41,7 +41,7 @@ final class FunctionLikeTest extends TestCase
     #[Test]
     public function readingFromFileSystemInAChildHasACostOfFourTimesUsage(): void
     {
-        $this->markTestSkipped();
+        $this->markTestIncomplete();
         $rule = $this->createMock(Rule::class);
         $rule
             ->expects(self::once())

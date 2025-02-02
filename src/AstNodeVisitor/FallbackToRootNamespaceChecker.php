@@ -30,7 +30,7 @@ class FallbackToRootNamespaceChecker extends NodeVisitorAbstract
         }
         return $node;
     }
-    public function afterTraverse(array $nodes)
+    public function afterTraverse(array $nodes): void
     {
         $this->namespace = '';
     }

@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace De\Idrinth\PhpCostEstimator\State;
 
-class FunctionDefinitionList
+final class FunctionDefinitionList
 {
     private array $functions = [];
     public function add(string $name): void

@@ -13,7 +13,7 @@ class FunctionLikeCallCountTest extends TestCase
     #[Test]
     public function canBeConstructed(): void
     {
-        $this->markTestSkipped();
+        $this->markTestIncomplete();
         $sut = new FunctionLikeCallCount(
             $func = $this->createStub(FunctionLike::class),
             111,
