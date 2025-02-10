@@ -66,32 +66,33 @@
         },
         {
             "name": "ocramius/package-versions",
-            "version": "2.9.0",
+            "version": "2.10.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Ocramius/PackageVersions.git",
-                "reference": "b3397b9b4578989929d3bc2602c26fe19f035095"
+                "reference": "b2181b8f0e2adeef0db76a209e1a69369d8abe6f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Ocramius/PackageVersions/zipball/b3397b9b4578989929d3bc2602c26fe19f035095",
-                "reference": "b3397b9b4578989929d3bc2602c26fe19f035095",
+                "url": "https://api.github.com/repos/Ocramius/PackageVersions/zipball/b2181b8f0e2adeef0db76a209e1a69369d8abe6f",
+                "reference": "b2181b8f0e2adeef0db76a209e1a69369d8abe6f",
                 "shasum": ""
             },
             "require": {
                 "composer-runtime-api": "^2.2.0",
-                "php": "~8.1.0 || ~8.2.0 || ~8.3.0 || ~8.4.0"
+                "php": "~8.2.0 || ~8.3.0 || ~8.4.0"
             },
             "replace": {
                 "composer/package-versions-deprecated": "*"
             },
             "require-dev": {
-                "composer/composer": "^2.7.7",
+                "composer/composer": "^2.8.5",
                 "doctrine/coding-standard": "^12.0.0",
                 "ext-zip": "^1.15.0",
-                "phpunit/phpunit": "^9.6.20",
-                "roave/infection-static-analysis-plugin": "^1.35.0",
-                "vimeo/psalm": "^5.25.0"
+                "phpunit/phpunit": "^11.5.6",
+                "psalm/plugin-phpunit": "^0.19.2",
+                "roave/infection-static-analysis-plugin": "^1.36.0",
+                "vimeo/psalm": "^6.3.0"
             },
             "type": "library",
             "autoload": {
@@ -112,7 +113,7 @@
             "description": "Provides efficient querying for installed package versions (no runtime IO)",
             "support": {
                 "issues": "https://github.com/Ocramius/PackageVersions/issues",
-                "source": "https://github.com/Ocramius/PackageVersions/tree/2.9.0"
+                "source": "https://github.com/Ocramius/PackageVersions/tree/2.10.0"
             },
             "funding": [
                 {
@@ -124,7 +125,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-08-04T10:04:51+00:00"
+            "time": "2025-02-05T12:31:16+00:00"
         },
         {
             "name": "psr/container",
