@@ -29,10 +29,10 @@ final class FunctionListBuilder extends NodeVisitorAbstract
         if ($node instanceof Node\Stmt\ClassLike && $node->name instanceof Node\Identifier) {
             $this->class = $node->name->toString();
         }
-        if ($node instanceof Node\Stmt\Function_ && $node->name instanceof Node\Identifier) {
+        if ($node instanceof Node\Stmt\Function_) {
             $this->functions->add($this->namespace . '\\' . $node->name->toString());
         }
-        if ($node instanceof Node\Stmt\ClassMethod && !$node->isAbstract() && $this->class !== '' && $node->name instanceof Node\Identifier) {
+        if ($node instanceof Node\Stmt\ClassMethod && !$node->isAbstract() && $this->class !== '') {
             $this->functions->add($this->namespace . '\\' . $this->class . '::' . $node->name->toString());
             $this->callables->markFound($this->namespace . '\\' . $this->class . '::' . $node->name->toString());
         }

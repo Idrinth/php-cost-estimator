@@ -16,10 +16,6 @@ class TypeCollector extends NodeVisitorAbstract
     }
     public function enterNode(Node $node): null
     {
-        if ($node instanceof Node\Stmt\ClassLike && $node->namespacedName instanceof Node\Identifier) {
-            $this->types->addVariable($node->namespacedName->toString(), '__construct', 'this', $node->namespacedName->toString());
-            $this->class = $node->namespacedName->toString();
-        }
         if ($node instanceof Node\Stmt\Property) {
             foreach ($node->props as $property) {
                 if (property_exists($property, 'type') && $property->type instanceof Node\Identifier) {

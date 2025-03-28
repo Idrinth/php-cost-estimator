@@ -23,7 +23,7 @@ class FallbackToRootNamespaceChecker extends NodeVisitorAbstract
         if ($node instanceof Node\Expr\FuncCall && $this->namespace !== '') {
             if ($node->name instanceof Node\Name && $node->name->hasAttribute('namespacedName')) {
                 $name = $node->name->getAttribute('namespacedName');
-                if (!$this->functions->has($name->toString()) && str_starts_with($name->toString(), $this->namespace)) {
+                if (str_contains(substr($name->toString(), 1), '\\') && !$this->functions->has($name->toString()) && str_starts_with($name->toString(), $this->namespace)) {
                     $node->setAttribute('idrinth-fallback', true);
                 }
             }

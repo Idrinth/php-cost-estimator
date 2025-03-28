@@ -41,12 +41,6 @@ class TypeResolver extends NodeVisitorAbstract
                 } elseif ($expr->class instanceof Node\Stmt\Class_) {
                     $this->variables[$var->name . ''] = $expr->class->name->toString();
                 }
-            } elseif ($expr instanceof Node\Expr\New_ && $var instanceof Node\Identifier) {
-                if ($expr->class instanceof Node\Name) {
-                    $this->variables[$var->name . ''] = $expr->class->toString();
-                } elseif ($expr->class instanceof Node\Stmt\Class_) {
-                    $this->variables[$var->name . ''] = $expr->class->name->toString();
-                }
             } elseif ($expr instanceof Node\Expr\MethodCall && $var instanceof Node\Expr\Variable) {
                 if ($expr->var instanceof Node\Expr\Variable && $expr->var->name === 'this' && $expr->name instanceof Node\Identifier) {
                     $this->variables[$var->name . ''] = $this->types->getMethodReturnType($this->class, $expr->name . '');
@@ -97,7 +91,7 @@ class TypeResolver extends NodeVisitorAbstract
             }
         }
         if ($node instanceof Node\Expr\PropertyFetch) {
-            if ($node->var instanceof Node\Identifier && $node->var->name === 'this' && isset($this->properties[$node->name . ''])) {
+            if ($node->var->hasAttribute('name') && $node->var->name.'' === 'this' && isset($this->properties[$node->name . ''])) {
                 $node->setAttribute('idrinth-type', $this->properties[$node->name . '']);
             }
         }
