@@ -70,6 +70,12 @@ class Check extends Command
             InputOption::VALUE_NONE,
             'Disable progress output'
         );
+        $this->addOption(
+            'min-severity',
+            'm',
+            InputOption::VALUE_REQUIRED,
+            'Set the minimum severity of php cost'
+        );
     }
     private function iterateFolder(
         string $folder,

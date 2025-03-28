@@ -34,7 +34,7 @@ class UsesStaticComparison implements Rule
             if ($astNode->args[0]->value instanceof Node\Expr\ClassConstFetch && $astNode->args[1]->value instanceof Node\Expr\Array_) {
                 return true;
             }
-            if ($astNode->args[0]->value instanceof Node\Expr\Array_ && count($astNode->args[1]->value->items) === 0) {
+            if ($astNode->args[0]->value instanceof Node\Expr\Array_ && $astNode->args[0]->value->hasAttribute('items') && count($astNode->args[1]->value->items) === 0) {
                 return true;
             }
         }

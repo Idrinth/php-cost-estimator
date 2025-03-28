@@ -19,5 +19,6 @@ return [
     ],
     'folders' => [
         'src'
-    ]
+    ],
+    "minSeverity" => 0,
 ];

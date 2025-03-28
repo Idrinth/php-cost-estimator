@@ -46,7 +46,7 @@ final readonly class Cli implements Configuration
 
     public function minSeverity(): int
     {
-        return (int) $this->input->getOption('min-severity');
+        return $this->input->hasOption('min-severity') ? (int) $this->input->getOption('min-severity') : 0;
     }
 
     public function starters(): iterable
