@@ -30,7 +30,7 @@
     "php": "^8.4",
     "nikic/php-parser": "^v5.4.0",
     "roave/security-advisories": "dev-master",
-    "symfony/console": "^7.2.5",
+    "symfony/console": "^8.0.0",
     "ocramius/package-versions": "^2.10.0"
   },
   "require-dev": {
